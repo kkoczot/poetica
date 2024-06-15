@@ -14,7 +14,6 @@ interface Props {
   following: number;
 }
 
-// Rozbij na mniejsze ponieważ w pewnych sytuacjach wyskakuje błąd odnośnie "use client" związane z (un)follołowaniem dostępnym tylko dla zalogowanych!
 async function ProfileHeader({ accountId, authUserId, name, username, image, bio, follow, followers, following }: Props) {
   return (
     <section>
@@ -38,7 +37,7 @@ async function ProfileHeader({ accountId, authUserId, name, username, image, bio
               <p className='text-base-medium text-gray-1'>@{username}</p>
             </div>
           </div>
-          <div>
+          <div className="mt-2">
             <span className="text-white">Followers: {followers} | Following: {following}</span>
           </div>
           </div>

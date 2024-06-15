@@ -16,10 +16,7 @@ const Page = async ({ params }: { params: { profileId: string, folderId: string,
 
   const folders = await getAllUserFolders(params.profileId);
 
-  const fetchedFolder = await fetchFolder(params.folderId);
-
   if (userId !== params.profileId) redirect(`/profile/${params.profileId}`);
-  if (!fetchedFolder.deletable) redirect(`/profile/${params.profileId}/${params.folderId}/`);
   
   // console.log("folders: ", folders);
   const poemData = {

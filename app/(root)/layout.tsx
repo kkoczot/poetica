@@ -22,9 +22,10 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <LeftSidebar />
         <section className="main-container">
           <div className="w-full max-w-4xl">
-            <Suspense fallback={<p className="text-white text-3xl"></p>}>
+            {/* <Suspense fallback={<p className="text-white text-9xl">Loading...</p>}>
               {children}
-            </Suspense>
+            </Suspense> */}
+            {children}
           </div>
         </section>
         <RightSidebar />
