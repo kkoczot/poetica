@@ -22,8 +22,10 @@ async function RightSidebar() {
                   <Link href={`/profile/${author.id}`}>
                     <Image className="rounded-full block" src={author.image} alt={author.username} width={64} height={64} />
                   </Link>
-                  <p className="text-white mb-2">@{author.username}</p>
+                  <p className="text-white mt-2 mb-1">@{author.username}</p>
+                  <span className="hover:bg-dark-1 p-[2px] rounded-lg">
                   <HandleFollowBtn authUserId={user.id} userId={author.id} follow="follow" />
+                  </span>
                 </div>
               )
             })
@@ -40,8 +42,10 @@ async function RightSidebar() {
                   <Link href={`/profile/${author.id}`}>
                     <Image className="rounded-full block" src={author.image} alt={author.username} width={64} height={64} />
                   </Link>
-                  <p className="text-white mb-2">@{author.username}</p>
+                  <p className="text-white mt-2 mb-1">@{author.username}</p>
+                  <span className="hover:bg-dark-1 p-[2px] rounded-lg">
                   <HandleFollowBtn authUserId={user.id} userId={author.id} follow="unfollow" />
+                  </span>
                 </div>
               )
             })

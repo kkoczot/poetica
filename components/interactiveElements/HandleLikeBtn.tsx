@@ -20,7 +20,7 @@ function HandleLikeBtn({ authUserId, poemId, length, liked }: Props) {
         await handleLike(authUserId, poemId, "handle");
         // router.refresh();
       }}
-      className="flex cursor-pointer gap-3 rounded-lg bg-dark-3 px-4 py-2 text-light-2 disabled:bg-dark-4"
+      className="flex cursor-pointer gap-3 rounded-lg bg-dark-3 px-4 py-2 text-light-2 disabled:bg-dark-4 hover:bg-dark-2"
     >
       <div className="flex gap-2">
         <Image src={liked ? "/assets/heart-filled.svg" : "/assets/heart-gray.svg"} alt="heart" width={25} height={25} />

@@ -18,7 +18,7 @@ function DeleteFolderBtn({ authorId, folderId }: Props) {
           router.push(`/profile/${authorId}`);
         }
       }}
-      className="flex cursor-pointer gap-3 rounded-lg bg-dark-3 px-4 py-2 text-red-500"
+      className="flex cursor-pointer gap-3 rounded-lg bg-dark-3 px-4 py-2 text-red-500 hover:bg-dark-2"
     >
       Delete
     </button>

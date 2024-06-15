@@ -26,7 +26,7 @@ function PoemCardBtns({ authorId, folderId, poemId, own, toDisplay }: Props) {
         toDisplay.show && (
           <Link
             href={`${pathname}/${poemId}`}
-            className="flex cursor-pointer gap-3 rounded-lg bg-dark-3 px-4 py-2"
+            className="flex cursor-pointer gap-3 rounded-lg bg-dark-3 px-4 py-2 hover:bg-dark-2 w-full justify-center"
           >
             Show
           </Link>
@@ -36,7 +36,7 @@ function PoemCardBtns({ authorId, folderId, poemId, own, toDisplay }: Props) {
         toDisplay.edit && own && (
           <Link
             href={pathname.includes(poemId) ? `${pathname}/edit` : `${pathname}/${poemId}/edit`}
-            className="flex cursor-pointer gap-3 rounded-lg bg-dark-3 px-4 py-2"
+            className="flex cursor-pointer gap-3 rounded-lg bg-dark-3 px-4 py-2 hover:bg-dark-2 w-full justify-center"
           >
             Edit
           </Link>
@@ -65,7 +65,7 @@ function PoemCardBtns({ authorId, folderId, poemId, own, toDisplay }: Props) {
                 router.refresh();
               }
             }}
-            className="flex cursor-pointer gap-3 rounded-lg bg-dark-3 px-4 py-2 text-red-500"
+            className="flex cursor-pointer gap-3 rounded-lg bg-dark-3 px-4 py-2 text-red-500 hover:bg-dark-2 w-full justify-center"
           >
             Delete
           </button>

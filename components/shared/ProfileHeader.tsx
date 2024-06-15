@@ -19,7 +19,6 @@ async function ProfileHeader({ accountId, authUserId, name, username, image, bio
     <section>
       <div className='flex w-full flex-col justify-start'>
         <div className='flex items-center justify-between max-md:flex-col max-md:items-start gap-y-4'>
-          <div>
           <div className='flex items-center gap-3'>
             <div className='relative h-20 w-20 object-cover'>
               <Image
@@ -37,10 +36,7 @@ async function ProfileHeader({ accountId, authUserId, name, username, image, bio
               <p className='text-base-medium text-gray-1'>@{username}</p>
             </div>
           </div>
-          <div className="mt-2">
-            <span className="text-white">Followers: {followers} | Following: {following}</span>
-          </div>
-          </div>
+
           <div className="flex gap-4">
             {accountId === authUserId && (
               <>
@@ -73,7 +69,9 @@ async function ProfileHeader({ accountId, authUserId, name, username, image, bio
             )}
           </div>
         </div>
-
+        <div className="mt-4">
+          <span className="text-white">Followers: {followers} | Following: {following}</span>
+        </div>
         <p className='mt-6 max-w-lg text-base-regular text-light-2'>{bio}</p>
 
         <div className='mt-12 h-0.5 w-full bg-dark-3' />

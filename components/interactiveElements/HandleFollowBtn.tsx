@@ -18,7 +18,7 @@ function HandleFollowBtn({ authUserId, userId, follow }: Props) {
         await handleUserFollow(authUserId, userId);
         router.refresh();
       }}
-      className="flex cursor-pointer gap-3 rounded-lg bg-dark-3 px-4 py-2 text-light-2"
+      className="flex cursor-pointer gap-3 rounded-lg bg-dark-3 px-4 py-2 text-light-2 hover:bg-dark-2"
     >
       {follow}
     </button>

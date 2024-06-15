@@ -24,8 +24,10 @@ const Page = async ({ params }: { params: { profileId: string, folderId: string,
     <section className="flex flex-col gap-6">
       <div>
         <div>
-          <p className="text-light-2">Author: {username} | Folder: {title} | {!shared && "not"} shared | likes: {poemData.favourite.length}</p>
-          <div className="flex gap-4 text-light-2">
+          <p className="text-light-2">
+            Author: {username} <span className="max-sm:hidden">|</span><br className="sm:hidden" /> Folder: {title} | {!shared && "not"} shared | likes: {poemData.favourite.length}
+            </p>
+          <div className="flex gap-4 text-light-2 max-w-[325px] my-4">
             <PoemCardBtns authorId={JSON.parse(JSON.stringify(poemData.authorId))} folderId={JSON.parse(JSON.stringify(poemData.folderId))} poemId={params.poemId} own={own} toDisplay={{ edit: true, del: true, move: true }} />
           </div>
         </div>

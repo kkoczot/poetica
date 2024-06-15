@@ -31,7 +31,7 @@ if (!fetchedFolder.shared && user?.id !== params.profileId) redirect(`/profile/$
             {
               user && user.id === params.profileId && fetchedFolder.deletable && ( //
                 <Link href={`/profile/${params.profileId}/${params.folderId}/edit`}>
-                  <div className='flex cursor-pointer gap-3 rounded-lg bg-dark-3 px-4 py-2'>
+                  <div className='flex cursor-pointer gap-3 rounded-lg bg-dark-3 px-4 py-2 hover:bg-dark-2'>
                     <Image
                       src='/assets/edit.svg'
                       alt='logout'
@@ -46,7 +46,7 @@ if (!fetchedFolder.shared && user?.id !== params.profileId) redirect(`/profile/$
             {
               user && user.id === params.profileId && ( //
                 <Link href={`/profile/${params.profileId}/${params.folderId}/create-poem`}>
-                  <div className="flex cursor-pointer gap-3 rounded-lg bg-dark-3 px-4 py-2">
+                  <div className="flex cursor-pointer gap-3 rounded-lg bg-dark-3 px-4 py-2 hover:bg-dark-2">
                     <Image
                       src='/assets/edit.svg'
                       alt='logout'
@@ -70,7 +70,8 @@ if (!fetchedFolder.shared && user?.id !== params.profileId) redirect(`/profile/$
         <div className='mt-12 h-0.5 w-full bg-dark-3' />
       </div>
       <div className="mt-10">
-        <div className="flex sm:flex-col justify-between gap-4">
+        {/* <div className="flex sm:flex-col justify-between gap-4"> */}
+        <div className="grid grid-cols-1 xl:grid-cols-2 gap-y-12 gap-x-6">
           {
             showPoems && (fetchedFolder.poems.length < 1 ? (<p className="text-red-500">No poems here yet!</p>) : (
               fetchedFolder.poems.map((poem: string) => <PoemCard key={poem} pathname={pathname} poemId={JSON.parse(JSON.stringify(poem))} own={Boolean(user && user.id === params.profileId)} authUserId={user?.id} />)
