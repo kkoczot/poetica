@@ -3,6 +3,7 @@ import { fetchFolder } from "@/lib/actions/folder.actions";
 import { fetchPoem } from "@/lib/actions/poem.actions";
 import { fetchUser } from "@/lib/actions/user.actions";
 import { currentUser } from "@clerk/nextjs";
+import Link from "next/link";
 import { redirect } from "next/navigation";
 
 const Page = async ({ params }: { params: { profileId: string, folderId: string, poemId: string } }) => {
@@ -18,15 +19,21 @@ const Page = async ({ params }: { params: { profileId: string, folderId: string,
   const { username } = await fetchUser(params.profileId);
   const { title, shared, authorId } = await fetchFolder(params.folderId);
 
-  if(!own && !shared) redirect("/sign-in");
+  if (!own && !shared) redirect("/sign-in");
 
   return (
     <section className="flex flex-col gap-6">
       <div>
         <div>
           <p className="text-light-2">
-            Author: {username} <span className="max-sm:hidden">|</span><br className="sm:hidden" /> Folder: {title} | {!shared && "not"} shared | likes: {poemData.favourite.length}
-            </p>
+            Author:
+            <Link href={`/profile/${params.profileId}/`} className="hover:opacity-80">
+              {" @"+username}
+            </Link> <span className="max-sm:hidden">|</span><br className="sm:hidden" /> Folder: 
+            <Link href={`/profile/${params.profileId}/${params.folderId}/`} className="hover:opacity-80">
+            {" "+title}
+            </Link> | {!shared && "not"} shared | likes: {poemData.favourite.length}
+          </p>
           <div className="flex gap-4 text-light-2 max-w-[325px] my-4">
             <PoemCardBtns authorId={JSON.parse(JSON.stringify(poemData.authorId))} folderId={JSON.parse(JSON.stringify(poemData.folderId))} poemId={params.poemId} own={own} toDisplay={{ edit: true, del: true, move: true }} />
           </div>

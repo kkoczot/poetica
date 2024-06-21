@@ -17,7 +17,7 @@ const Page = async ({ params }: { params: { profileId: string, folderId: string 
   const fetchedFolder = await fetchFolder(params.folderId);
   
   if (!fetchedFolder) redirect(`/profile/${params.profileId}`);
-  console.log(fetchedFolder);
+  // console.log(fetchedFolder);
 if (!fetchedFolder.shared && user?.id !== params.profileId) redirect(`/profile/${params.profileId}`);
   const showPoems = fetchedFolder.shared || (user && user.id === params.profileId); //
   const pathname = `/profile/${params.profileId}/${params.folderId}`;
