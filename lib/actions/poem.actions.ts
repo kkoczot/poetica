@@ -5,7 +5,7 @@ import Author from "../models/user.model";
 import Folder from "../models/folder.model";
 import Poem from "../models/poem.model";
 import { revalidatePath } from "next/cache";
-import { fetchUser } from "./user.actions";
+import { fetchUser, getUsersIds } from "./user.actions";
 
 interface Params {
   folderId: string,
@@ -136,4 +136,24 @@ export async function handleLike(authUserId: string | undefined, poemId: string,
   } finally {
     revalidatePath(`/profile/${authUserId}/`)
   }
+}
+
+export async function totalFetchLikedPoems(poemIds: string[]) {
+  let results = poemIds.map(async (poemdId) => {
+    return await fetchPoem(poemdId);
+  });
+  const firstData = await Promise.all(results);
+  
+  results = firstData.map(async (d) => {
+    const ids = await getUsersIds(d.authorId, "MongoDB");
+    return await fetchUser( ids.id );
+  });
+  const secondData = await Promise.all(results);
+  // console.log("secondData: ", secondData);
+
+  const thirdData = firstData.map((d, i) => {
+    return d.authorId = secondData[i];
+  })
+
+  return thirdData;
 }
