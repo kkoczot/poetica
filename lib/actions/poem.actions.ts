@@ -6,6 +6,7 @@ import Folder from "../models/folder.model";
 import Poem from "../models/poem.model";
 import { revalidatePath } from "next/cache";
 import { fetchUser, getUsersIds } from "./user.actions";
+import mongoose from "mongoose";
 
 interface Params {
   folderId: string,
@@ -138,22 +139,13 @@ export async function handleLike(authUserId: string | undefined, poemId: string,
   }
 }
 
-export async function totalFetchLikedPoems(poemIds: string[]) {
-  let results = poemIds.map(async (poemdId) => {
-    return await fetchPoem(poemdId);
-  });
-  const firstData = await Promise.all(results);
-  
-  results = firstData.map(async (d) => {
-    const ids = await getUsersIds(d.authorId, "MongoDB");
-    return await fetchUser( ids.id );
-  });
-  const secondData = await Promise.all(results);
-  // console.log("secondData: ", secondData);
+export async function totalFetchLikedPoems(poemIds: string[]) { //użyć populate i chat GPT
+  mongoose.set('strictPopulate', false);
 
-  const thirdData = firstData.map((d, i) => {
-    return d.authorId = secondData[i];
-  })
+  let results = poemIds.map(async (poemId) => {
+    return await Poem.findById(poemId).populate({ path: "authorId", select: "username name image id" }).populate({ path: "folderId", select: "title shared" });
+  });
+  const data = await Promise.all(results);
 
-  return thirdData;
+  return data;
 }

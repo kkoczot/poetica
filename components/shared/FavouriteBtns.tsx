@@ -11,7 +11,7 @@ function FavouriteBtns() {
   // console.log(spQ);
 
   function replaceSpacesWithHyphens(type: string) {
-    return type.replace(/\s+/g, '-');
+    return type.replace(/\s+/g, '-').toLowerCase();
   }
 
   function handleButton(type: string) {
@@ -40,9 +40,9 @@ function FavouriteBtns() {
           <button
             key={i}
             className={`text-white border border-white rounded-lg px-4 py-1 mx-2
-              ${checkIfActive(replaceSpacesWithHyphens(pt.poemType.toLowerCase())) ? "bg-white text-black" : ""}
+              ${checkIfActive(replaceSpacesWithHyphens(pt.poemType)) ? "bg-white !text-black" : ""}
               `}
-            onClick={() => handleButton(replaceSpacesWithHyphens(pt.poemType.toLowerCase()))}
+            onClick={() => handleButton(replaceSpacesWithHyphens(pt.poemType))}
           >
             {pt.poemType}
           </button>

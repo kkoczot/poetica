@@ -49,6 +49,8 @@ email: mickiewicz@poetica.pl
 username: mickiewicz
 password: mickiewicz1@
 
+W lokalnym adapterze Bluetooth wystąpił nieokreślony błąd. Adapter nie będzie używany. Sterownik został usunięty z pamięci.
+
 -------------------------------------------------------------------------------------------------------------
 
 Check the top-level render call using <div>. See https://reactjs.org/link/warning-keys for more information.

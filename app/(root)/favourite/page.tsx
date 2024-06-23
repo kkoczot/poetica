@@ -16,7 +16,7 @@ const Page = async () => {
   console.log("authUser.likes: ", authUser.likes);
 
   const likedPoemsData = await totalFetchLikedPoems(authUser.likes);
-  console.log("likedPoemsData: ", likedPoemsData);
+  const data = likedPoemsData.map(d => JSON.stringify(d));
 
   return (
     <section>
@@ -40,7 +40,7 @@ const Page = async () => {
         </div>
       </div>
       <div>
-        <FavouritePoems data={JSON.stringify(likedPoemsData)} />
+        { likedPoemsData && <FavouritePoems data={JSON.stringify(data)} />}
       </div>
     </section>
   )
