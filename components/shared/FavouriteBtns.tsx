@@ -1,13 +1,13 @@
 "use client";
-import { usePathname, useRouter, useSearchParams } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { poemTypes } from "@/constants";
 
 function FavouriteBtns() {
   const router = useRouter();
-  const pathname = usePathname();
   const sp = useSearchParams();
   // console.log("RE-RENDER!");
   const spQ = sp.get('q') || "";
+  const page = Number(sp.get("page")) || 1;
   // console.log(spQ);
 
   function replaceSpacesWithHyphens(type: string) {
@@ -16,16 +16,20 @@ function FavouriteBtns() {
 
   function handleButton(type: string) {
     if (!spQ) {
-      router.push(`${pathname}?q=${type}`);
+      if (page === 1) router.push(`/favourite?q=${type}`)
+      else router.push(`/favourite?q=${type}&page=${page}`)
     } else if (spQ.includes(type)) {
       if (spQ.split('.').length === 1) {
-        router.push(pathname);
+        if (page === 1) router.push("/favourite")
+        else router.push(`/favourite?page=${page}`);
       } else {
         const q = spQ.split('.').filter(function (element) { return element != type }).join('.');
-        router.push(`${pathname}?q=${q}`);
+        if (page === 1) router.push(`/favourite?q=${q}`);
+        else router.push(`/favourite?q=${q}&page=${page}`);
       }
     } else {
-      router.push(`${pathname}?q=${spQ}.${type}`);
+      if (page === 1) router.push(`/favourite?q=${spQ}.${type}`);
+      else router.push(`/favourite?q=${spQ}.${type}&page=${page}`);
     }
   }
 

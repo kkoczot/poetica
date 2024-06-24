@@ -141,11 +141,19 @@ export async function handleLike(authUserId: string | undefined, poemId: string,
 
 export async function totalFetchLikedPoems(poemIds: string[]) { //użyć populate i chat GPT
   mongoose.set('strictPopulate', false);
-
-  let results = poemIds.map(async (poemId) => {
-    return await Poem.findById(poemId).populate({ path: "authorId", select: "username name image id" }).populate({ path: "folderId", select: "title shared" });
-  });
-  const data = await Promise.all(results);
-
-  return data;
+  connectToDB();
+  try {
+    let results = poemIds.map(async (poemId) => {
+      return await Poem.findById(poemId).populate({ path: "authorId", select: "username name image id" }).populate({ path: "folderId", select: "title shared" });
+    });
+    const data = await Promise.all(results);
+    console.log(`
+      -----------------------------------------------
+      > Funkcja pobrania danych została wykonana!
+      -----------------------------------------------
+      `)
+    return data || [];
+  } catch (error) {
+    return [];
+  }
 }

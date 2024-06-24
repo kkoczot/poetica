@@ -13,11 +13,11 @@ const Page = async () => {
   const authUser = await fetchUser(user.id);
   if (user && !authUser.onboarded) redirect("/onboarding");
   
-  console.log("authUser.likes: ", authUser.likes);
+  // console.log("authUser.likes: ", authUser.likes);
 
-  const likedPoemsData = await totalFetchLikedPoems(authUser.likes);
-  const data = likedPoemsData.map(d => JSON.stringify(d));
-
+  const likedPoemsData = await totalFetchLikedPoems(authUser.likes); // authUser.likes
+  const data = likedPoemsData.length > 0 && likedPoemsData.map(d => JSON.stringify(d));
+  // console.log(" >>> data: ", likedPoemsData);
   return (
     <section>
       <div>
@@ -40,7 +40,7 @@ const Page = async () => {
         </div>
       </div>
       <div>
-        { likedPoemsData && <FavouritePoems data={JSON.stringify(data)} />}
+        { likedPoemsData && <FavouritePoems data={ data ? JSON.stringify(data) : JSON.stringify([])} />}
       </div>
     </section>
   )
