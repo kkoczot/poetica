@@ -38,12 +38,12 @@ function FavouriteBtns() {
   }
 
   return (
-    <div>
+    <div className="max-2xl:grid max-sm:grid-cols-2 max-2xl:grid-cols-4 flex justify-between gap-4">
       {
         poemTypes.map((pt, i) => (
           <button
             key={i}
-            className={`text-white border border-white rounded-lg px-4 py-1 mx-2
+            className={`text-white border border-white rounded-lg px-5 py-2 hover:opacity-80
               ${checkIfActive(replaceSpacesWithHyphens(pt.poemType)) ? "bg-white !text-black" : ""}
               `}
             onClick={() => handleButton(replaceSpacesWithHyphens(pt.poemType))}

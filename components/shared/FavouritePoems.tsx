@@ -34,7 +34,7 @@ function FavouritePoems(data: any) {
   const router = useRouter();
   const sp = useSearchParams();
   const spQ = sp.get('q')?.split('.') || "";
-  const poemData = JSON.parse(data.data).map((d:any) => JSON.parse(d));
+  const poemData = JSON.parse(data.data).map((d: any) => JSON.parse(d));
   // console.log(sp.get("page"));
 
   const showPerPage = 1;
@@ -68,7 +68,7 @@ function FavouritePoems(data: any) {
 
     // Popracować nad wyświetlaniem! Sprawdzić czy poprawiona wersja działa!
     if (page > pages || page < 0) page = 1;
-    const poemsToShow = adequatePoems.filter((_: any, i: number) => (i + 1 >= page -1  * showPerPage + 1) && (i + 1 <= page * showPerPage));
+    const poemsToShow = adequatePoems.filter((_: any, i: number) => (i + 1 >= page - 1 * showPerPage + 1) && (i + 1 <= page * showPerPage));
     console.log("poemsToShow: ", poemsToShow);
     return poemsToShow;
   }
@@ -84,7 +84,7 @@ function FavouritePoems(data: any) {
     }
   }
 
-  function handlePagination() {
+  function handlePagination() { // ogarnąć by wyświetlać tylko ograniczoną liczbę przycisków dla userów, którzy mogą lubić w cholerę wierszy
     let page = Number(sp.get("page")) || 1;
     const countPoems = poemData.filter((d: Poem) => d.folderId.shared && (spQ === "" || spQ?.includes(replaceSpacesWithHyphens(d.type)))).length;
     const pages = Math.ceil(countPoems / showPerPage);
@@ -93,8 +93,8 @@ function FavouritePoems(data: any) {
     return Array.from({ length: pages }, (_, i) => (
       <button
         key={i + 1}
-        disabled={page === i+1}
-        className={`border border-white rounded-lg px-5 py-1 text-white ${page === i + 1 ? "bg-white !text-black" : ""}`}
+        disabled={page === i + 1}
+        className={`border border-white rounded-lg px-[12px] py-1 text-white ${page === i + 1 ? "bg-white !text-black" : ""} hover:opacity-80 hover:cursor-pointer`}
         onClick={() => router.push(handleSearchParams(i + 1))}
       >
         {i + 1}
@@ -106,13 +106,9 @@ function FavouritePoems(data: any) {
   return (
     <div>
       <p className="text-heading1-bold text-white mt-10">Poems</p>
+      <div className='mt-4 h-0.5 w-full bg-dark-3' />
       <div>
-        {/* 
-          - Dodać napis, że user nie ma jeszcze polubionych wierszy jesli jeszcze ich nie ma
-          - Dodać napis, że user nie lubi jeszcze wierszy danego typu
-          - Ogarnąć wygląd
-          - Ogarnąć system stronicowania | NAJTRUDNIEJSZE ZADANIE NA TEJ STRONIE
-        */}
+        {/* whitespace-nowrap text-ellipsis overflow-hidden */}
         {handleTextShow()}
         {
           getProperPoems().map((d: Poem) => (
@@ -122,7 +118,7 @@ function FavouritePoems(data: any) {
                   <Image src={d.authorId.image} alt={d.authorId.name} width={48} height={48} />
                 </Link>
                 <Link href={`/profile/${d.authorId.id}`}><p>@{d.authorId.username}</p></Link>
-                <p className="my-2">Folder: {d.folderId.title}</p>
+                <p className="my-2">Folder: <Link href={`/profile/${d.authorId.id}/${d.folderId._id}`}>{d.folderId.title}</Link></p>
               </div>
               <div className="space-y-2">
                 <h3>Title: {d.title}</h3>
@@ -134,8 +130,8 @@ function FavouritePoems(data: any) {
           )
         }
       </div>
-      <div className="flex justify-center border border-white p-5 rounded-lg my-10">
-        <div className="flex space-x-5">
+      <div className="flex justify-center border border-white p-5 rounded-lg mt-[60px]">
+        <div className="flex space-x-4">
           {
             handlePagination() || <button disabled className="text-black bg-white border border-white py-1 px-5 rounded-lg">1</button>
           }
