@@ -84,16 +84,12 @@ function FavouritePoems(data: any) {
     }
   }
 
-  function handlePagination() { // ogarnąć by wyświetlać tylko ograniczoną liczbę przycisków dla userów, którzy mogą lubić w cholerę wierszy
+  function handlePagination() {
     let page = Number(sp.get("page")) || 1;
     const countPoems = poemData.filter((d: Poem) => d.folderId.shared && (spQ === "" || spQ?.includes(replaceSpacesWithHyphens(d.type)))).length;
-    // const pages = Math.ceil(countPoems / showPerPage);
-    // page = 6;
-    const pages = 20;
-    // if (page > pages || page < 0) router.push(`/favourite${spQ ? `?q=${spQ}` : ""}`);
+    const pages = Math.ceil(countPoems / showPerPage);
     if (!pages || page > pages) return false;
     if (pages < 11) {
-      console.log("1) ------------ pages < 11 ------------");
       return Array.from({ length: pages }, (_, i) => (
         <button
           key={i + 1}
@@ -106,9 +102,8 @@ function FavouritePoems(data: any) {
         </button>
       ))
     } else {
-      if (page < 6) {
-        console.log(" 2.1) ------------ page < 6 ------------");
-        const btnsToDisplay = Array.from({ length: page + 4 }, (_, i) => (
+      if (page < 5) {
+        const btnsToDisplay = Array.from({ length: page + (6 - page) }, (_, i) => (
           <button
             key={i + 1}
             title={String(i + 1)}
@@ -132,7 +127,6 @@ function FavouritePoems(data: any) {
         return btnsToDisplay;
       }
       else if (pages - page > 3) {
-        console.log(" 2.2) ------------ pages - page > 5 ------------");
         const iList = [-2, -1, 0, 1, 2];
         const btnsToDisplay = Array.from({ length: iList.length }, (_, i) => (
           <button
@@ -167,17 +161,16 @@ function FavouritePoems(data: any) {
         );
         return btnsToDisplay;
       } else {
-        console.log(" 2.3) ------------ pages - page < 6 ------------");
-        const iList = [-3, -2, -1, 0];
-        const btnsToDisplay = Array.from({ length: 4 + pages - page }, (_, i) => (
+        const iList = pages - page > 2 ? [-2, -1, 0] : pages - page > 1 ? [-3, -2, -1, 0] : pages - page > 0 ? [-4, -3, -2, -1, 0] : [-5, -4, -3, -2, -1, 0] ;
+        const btnsToDisplay = Array.from({ length: iList.length + pages - page }, (_, i) => (
           <button
-            key={page + (i > 3 ? i - 3 : iList[i])}
-            title={String(page + (i > 3 ? i - 3 : iList[i]))}
-            disabled={page === page + (i > 3 ? i - 3 : iList[i])}
-            className={`border border-white rounded-lg px-[12px] py-1 text-white ${page === page + (i > 3 ? i - 3 : iList[i]) ? "bg-white !text-black" : ""} hover:opacity-80 hover:cursor-pointer`}
-            onClick={() => router.push(handleSearchParams(page + (i > 3 ? i - 3 : iList[i])))}
+            key={page + (i > (iList.length - 1) ? i - (iList.length - 1) : iList[i])}
+            title={String(page + (i > (iList.length - 1) ? i - (iList.length - 1) : iList[i]))}
+            disabled={page === page + (i > (iList.length - 1) ? i - (iList.length - 1) : iList[i])}
+            className={`border border-white rounded-lg px-[12px] py-1 text-white ${page === page + (i > (iList.length - 1) ? i - (iList.length - 1) : iList[i]) ? "bg-white !text-black" : ""} hover:opacity-80 hover:cursor-pointer`}
+            onClick={() => router.push(handleSearchParams(page + (i > (iList.length - 1) ? i - (iList.length - 1) : iList[i])))}
           >
-            {page + (i > 3 ? i - 3 : iList[i])}
+            {page + (i > (iList.length - 1) ? i - (iList.length - 1) : iList[i])}
           </button>
         ));
         btnsToDisplay.unshift(
@@ -202,25 +195,25 @@ function FavouritePoems(data: any) {
       <div className='mt-4 h-0.5 w-full bg-dark-3' />
       <div>
         {/* whitespace-nowrap text-ellipsis overflow-hidden */}
-        {/* {handleTextShow()} */}
+        {handleTextShow()}
         {
-          // getProperPoems().map((d: Poem) => (
-          //   <div key={d._id.toString()} className="text-white my-5">
-          //     <div>
-          //       <Link href={`/profile/${d.authorId.id}`} className="inline-block">
-          //         <Image src={d.authorId.image} alt={d.authorId.name} width={48} height={48} />
-          //       </Link>
-          //       <Link href={`/profile/${d.authorId.id}`}><p>@{d.authorId.username}</p></Link>
-          //       <p className="my-2">Folder: <Link href={`/profile/${d.authorId.id}/${d.folderId._id}`}>{d.folderId.title}</Link></p>
-          //     </div>
-          //     <div className="space-y-2">
-          //       <h3>Title: {d.title}</h3>
-          //       <h4>Type: {d.type}</h4>
-          //       <p className="text-light-2 whitespace-break-spaces">{d.content}</p>
-          //     </div>
-          //   </div>
-          // )
-          // )
+          getProperPoems().map((d: Poem) => (
+            <div key={d._id.toString()} className="text-white my-5">
+              <div>
+                <Link href={`/profile/${d.authorId.id}`} className="inline-block">
+                  <Image src={d.authorId.image} alt={d.authorId.name} width={48} height={48} />
+                </Link>
+                <Link href={`/profile/${d.authorId.id}`}><p>@{d.authorId.username}</p></Link>
+                <p className="my-2">Folder: <Link href={`/profile/${d.authorId.id}/${d.folderId._id}`}>{d.folderId.title}</Link></p>
+              </div>
+              <div className="space-y-2">
+                <h3>Title: {d.title}</h3>
+                <h4>Type: {d.type}</h4>
+                <p className="text-light-2 whitespace-break-spaces">{d.content}</p>
+              </div>
+            </div>
+          )
+          )
         }
       </div>
       <div className="flex justify-center border border-white p-5 rounded-lg mt-[60px]">
