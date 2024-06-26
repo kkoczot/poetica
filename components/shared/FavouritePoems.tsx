@@ -35,7 +35,6 @@ function FavouritePoems(data: any) {
   const sp = useSearchParams();
   const spQ = sp.get('q')?.split('.') || "";
   const poemData = JSON.parse(data.data).map((d: any) => JSON.parse(d));
-  // console.log(sp.get("page"));
 
   const showPerPage = 1;
 
@@ -54,22 +53,15 @@ function FavouritePoems(data: any) {
 
   function getProperPoems() {
     let page = Number(sp.get("page")) || 1;
-    // console.log("page: ", page);
 
     const adequatePoems = poemData.filter((d: Poem) => d.folderId.shared && (spQ === "" || spQ?.includes(replaceSpacesWithHyphens(d.type))));
-    // console.log("adequatePoems: ", adequatePoems);
 
     const countPoems = adequatePoems.length;
-    // console.log("countPoems: ", countPoems);
 
     const pages = Math.ceil(countPoems / showPerPage);
-    // console.log("pages: ", pages);
 
-
-    // Popracować nad wyświetlaniem! Sprawdzić czy poprawiona wersja działa!
     if (page > pages || page < 0) page = 1;
     const poemsToShow = adequatePoems.filter((_: any, i: number) => (i + 1 >= page - 1 * showPerPage + 1) && (i + 1 <= page * showPerPage));
-    console.log("poemsToShow: ", poemsToShow);
     return poemsToShow;
   }
 

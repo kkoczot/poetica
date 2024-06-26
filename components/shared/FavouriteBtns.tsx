@@ -5,10 +5,8 @@ import { poemTypes } from "@/constants";
 function FavouriteBtns() {
   const router = useRouter();
   const sp = useSearchParams();
-  // console.log("RE-RENDER!");
   const spQ = sp.get('q') || "";
   const page = Number(sp.get("page")) || 1;
-  // console.log(spQ);
 
   function replaceSpacesWithHyphens(type: string) {
     return type.replace(/\s+/g, '-').toLowerCase();
