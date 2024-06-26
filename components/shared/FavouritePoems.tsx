@@ -168,7 +168,7 @@ function FavouritePoems(data: any) {
         btnsToDisplay.unshift(
           <button
             key={1}
-            title={String(pages)}
+            title="1"
             className={`border border-white rounded-lg px-[12px] py-1 text-white hover:opacity-80 hover:cursor-pointer`}
             onClick={() => router.push(handleSearchParams(1))}
           >
