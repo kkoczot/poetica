@@ -42,12 +42,16 @@ function FavouritePoems(data: any) {
     return type.replace(/\s+/g, '-').toLowerCase();
   }
 
-  function handleTextShow() {
-    if (poemData.filter((d: Poem) => d.folderId.shared).length < 1) {
-      return <p className="text-red-500">You do not like any poems yet!</p>
-    }
-    else if (spQ !== "" && poemData.filter((d: Poem) => d.folderId.shared && spQ?.includes(replaceSpacesWithHyphens(d.type))).length < 1) {
-      return <p className="text-red-500">You do not like any poems that are the type you have choosen!</p>
+  function handleTextShow(action: "text" | "amount") {
+    if (action === "text") {
+      if (poemData.filter((d: Poem) => d.folderId.shared).length < 1) {
+        return <p className="text-red-500 mt-5">You do not like any poems yet!</p>
+      }
+      else if (spQ !== "" && poemData.filter((d: Poem) => d.folderId.shared && spQ?.includes(replaceSpacesWithHyphens(d.type))).length < 1) {
+        return <p className="text-red-500 mt-5">You do not like any poems that are the type you have choosen!</p>
+      }
+    } else if (action === "amount") {
+      if (spQ !== "") return <p className="text-white inline-block ml-2">(found {poemData.filter((d: Poem) => d.folderId.shared && spQ?.includes(replaceSpacesWithHyphens(d.type))).length} poems)</p>
     }
   }
 
@@ -153,7 +157,7 @@ function FavouritePoems(data: any) {
         );
         return btnsToDisplay;
       } else {
-        const iList = pages - page > 2 ? [-2, -1, 0] : pages - page > 1 ? [-3, -2, -1, 0] : pages - page > 0 ? [-4, -3, -2, -1, 0] : [-5, -4, -3, -2, -1, 0] ;
+        const iList = pages - page > 2 ? [-2, -1, 0] : pages - page > 1 ? [-3, -2, -1, 0] : pages - page > 0 ? [-4, -3, -2, -1, 0] : [-5, -4, -3, -2, -1, 0];
         const btnsToDisplay = Array.from({ length: iList.length + pages - page }, (_, i) => (
           <button
             key={page + (i > (iList.length - 1) ? i - (iList.length - 1) : iList[i])}
@@ -183,11 +187,14 @@ function FavouritePoems(data: any) {
 
   return (
     <div>
-      <p className="text-heading1-bold text-white mt-10">Poems</p>
+      <div>
+        <p className="text-heading1-bold text-white mt-10 inline-block">Poems</p>
+        {handleTextShow("amount")}
+      </div>
       <div className='mt-4 h-0.5 w-full bg-dark-3' />
       <div>
         {/* whitespace-nowrap text-ellipsis overflow-hidden */}
-        {handleTextShow()}
+        {handleTextShow("text")}
         {
           getProperPoems().map((d: Poem) => (
             <div key={d._id.toString()} className="text-white my-5">
@@ -211,7 +218,7 @@ function FavouritePoems(data: any) {
       <div className="flex justify-center border border-white p-5 rounded-lg mt-[60px]">
         <div className="flex space-x-4">
           {
-            handlePagination() || <button disabled className="text-black bg-white border border-white py-1 px-5 rounded-lg">1</button>
+            handlePagination() || <button disabled className="text-black bg-white border border-white px-[12px] py-1 rounded-lg">1</button>
           }
         </div>
       </div>
