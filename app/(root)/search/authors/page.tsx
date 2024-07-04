@@ -2,9 +2,7 @@
 import Image from "next/image";
 import { useState } from "react";
 import { Input } from "@/components/ui/input";
-import { searchSimple as searchSimpleAuthors } from "@/lib/actions/user.actions";
-import { searchSimple as searchSimpleFolders } from "@/lib/actions/folder.actions";
-import { searchSimple as searchSimplePoems } from "@/lib/actions/poem.actions";
+import { searchComplex } from "@/lib/actions/user.actions";
 
 // Odpowiada za szukanie po: nazwie usera, nazwie wiersza, tagach || ogarnąć system stronicowania dla wyszukiwań
 // (Najpierw zrobić wyszukiwania / potem stronicowanie - patrzeć /favourite)
@@ -15,13 +13,8 @@ const Page = () => {
   const [data, setData] = useState<any[]>([]);
 
   async function getData() {
-    const foundAuthors = await searchSimpleAuthors(search);
-    console.log(" --- foundAuthors: ", foundAuthors);
-    const foundFolders = await searchSimpleFolders(search);
-    console.log(" --- foundFolders: ", foundFolders);
-    const foundPoems = await searchSimplePoems(search);
-    console.log(" --- foundPoems: ", foundPoems);
-    return [foundAuthors, foundFolders, foundPoems];
+    const authors = await searchComplex() || [];
+    return authors;
   }
 
   async function handleSearch() {
@@ -31,41 +24,25 @@ const Page = () => {
   }
 
   function countData() {
-    const authors = data[0]?.length;
-    const folders = data[1]?.length;
-    const poems = data[2]?.length;
-    return authors + folders + poems > 0
+    const authors = data?.length;
+    return authors > 0
   }
 
   function handleShow() {
-    const all: any[] = [];
-    if (data[0].length) {
-      data[0].map((author: any) => all.push(
+    const authors: any[] = [];
+    if (data.length) {
+      data.map((author: any) => authors.push(
         <div className="my-2" key={author.username}>
           <p className="text-white">{author.username}</p>
         </div>
       ));
     }
-    if (data[1].length) {
-      data[1].map((folder: any) => all.push(
-        <div className="my-2" key={folder.title}>
-          <p className="text-white">{folder.title}</p>
-        </div>
-      ));
-    }
-    if (data[2].length) {
-      data[2].map((poem: any) => all.push(
-        <div className="my-2" key={poem.title}>
-          <p className="text-white">{poem.title}</p>
-        </div>
-      ))
-    }
-    return all.map(item => item);
+    return authors.map(item => item);
   }
 
   return (
     <section>
-      <h3 className="text-white text-[20px] my-4">Results of SearchFilters All/Default:</h3>
+      <h3 className="text-white text-[20px] my-4">Results of SearchFilters Authors:</h3>
       <div className="flex gap-4 flex-row-reverse">
         <Image
           src="/assets/search-gray.svg"
@@ -79,7 +56,7 @@ const Page = () => {
           id="text"
           value={search}
           onChange={e => setSearch(e.target.value)}
-          placeholder="Search everything"
+          placeholder="Search username"
         />
       </div>
       <div className="my-10">

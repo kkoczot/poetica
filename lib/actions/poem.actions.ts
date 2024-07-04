@@ -157,3 +157,17 @@ export async function totalFetchLikedPoems(poemIds: string[]) { //użyć populat
     return [];
   }
 }
+
+export async function searchSimple(text: string) {
+  connectToDB();
+  try {
+    const foundPoems = await Poem.find({ title: { $regex: text } }).select("title type content").limit(5);
+    return foundPoems || [];
+  } catch (error) {
+    throw new Error("Failed to search for poems in searchSimple()");
+  }
+}
+
+export async function searchComplex() {
+  return null;
+}

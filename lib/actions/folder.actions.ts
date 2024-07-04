@@ -14,7 +14,7 @@ interface Params {
   firstFolder?: boolean,
 };
 
-export async function createFolder({ authorId, title, description, firstFolder, shared}: Params) {
+export async function createFolder({ authorId, title, description, firstFolder, shared }: Params) {
   connectToDB();
   try {
     const createdFolder = await Folder.create({
@@ -92,3 +92,17 @@ export async function getAllUserFolders(userId: string) {
     throw new Error("Failed to reach all users folders");
   }
 };
+
+export async function searchSimple(text: string) {
+  connectToDB();
+  try {
+    const foundFolders = await Folder.find({ title: { $regex: text } }).select("title").limit(5);
+    return foundFolders || [];
+  } catch (error) {
+    throw new Error("Failed to search for folders in searchSimple()");
+  }
+}
+
+export async function searchComplex() {
+  return null;
+}

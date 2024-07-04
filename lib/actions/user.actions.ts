@@ -65,13 +65,13 @@ export async function fetchUser(userId: string) {
   }
 }
 
- // !!! potrzeba rozwinąć funkcję by lepiej wyszukiwała userów
+// !!! potrzeba rozwinąć funkcję by lepiej wyszukiwała userów
 export async function fetchSimilarAuthors(userId: string) { // funkcja do poprawy - poprawić stopień zaawansowania | na razie jest git
   const currentUser = await fetchUser(userId);
   // console.log("currentUser: ", currentUser);
   try {
     connectToDB();
-    const similarAuthors = await Author.find({ followers: { $nin: [currentUser._id] }, _id: { $ne: currentUser._id }}).limit(5);
+    const similarAuthors = await Author.find({ followers: { $nin: [currentUser._id] }, _id: { $ne: currentUser._id } }).limit(5);
     // console.log("similarAuthors: ", similarAuthors);
     return similarAuthors;
   } catch (error) {
@@ -92,7 +92,7 @@ export async function fetchFollowedAuthors(userId: string) {
   const currentUser = await fetchUser(userId);
   try {
     connectToDB();
-    const followedAuthors = await Author.find({ followers: { $in: [currentUser._id] }, _id: { $ne: currentUser._id }}).limit(5);
+    const followedAuthors = await Author.find({ followers: { $in: [currentUser._id] }, _id: { $ne: currentUser._id } }).limit(5);
     return followedAuthors;
   } catch (error) {
     throw new Error("Failes to retrieve followed users!");
@@ -108,11 +108,11 @@ export async function checkUserFollow(authUserId: string, userId: string) { //au
     // console.log("isFollowed: ", isFollowed);
     return isFollowed ? true : false; // true - searchedUser is followed | false - searchedUser is not followed
   } catch (error) {
-    throw new Error("Failed to check if user is followed"); 
+    throw new Error("Failed to check if user is followed");
   }
 }
 
- // !!! brakuje jedynie odświeżenia by user wiedział, że funkcja zadziałała
+// !!! brakuje jedynie odświeżenia by user wiedział, że funkcja zadziałała
 export async function handleUserFollow(authUserId: string, userId: string) {
   // Funkcja działa
   connectToDB();
@@ -129,7 +129,7 @@ export async function handleUserFollow(authUserId: string, userId: string) {
       await Author.findByIdAndUpdate(authUser._id, {
         $pull: { following: searchedUserId._id }
       })
-  
+
     } else if (!isFollowed && (searchedUserId._id !== authUser._id)) {
       // searchedUserId -> add your id to this user's followers
       await Author.findByIdAndUpdate(searchedUserId._id, {
@@ -153,4 +153,18 @@ export async function getUsersIds(id: string, convertFrom: "MongoDB" | "Clerk") 
     idToReturn = await Author.findOne({ _id: id }).select("id");
   }
   return idToReturn;
+}
+
+export async function searchSimple(text: string) {
+  connectToDB();
+  try {
+    const foundAuthors = await Author.find({ username: { $regex: text } }).select("id username").limit(5);
+    return foundAuthors || [];
+  } catch (error) {
+    throw new Error("Failed to search for authors in searchSimple()");
+  }
+}
+
+export async function searchComplex() {
+  return null;
 }

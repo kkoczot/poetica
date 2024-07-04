@@ -49,29 +49,6 @@ email: mickiewicz@poetica.pl
 username: mickiewicz
 password: mickiewicz1@
 
-W lokalnym adapterze Bluetooth wystąpił nieokreślony błąd. Adapter nie będzie używany. Sterownik został usunięty z pamięci.
-
--------------------------------------------------------------------------------------------------------------
-
-Check the top-level render call using <div>. See https://reactjs.org/link/warning-keys for more information.
-    at div
-INFO: Clerk: The request to /profile/user_2eea4HTJHMWmw1leW363bHc5wR0 is being redirected because there is no signed-in user, and the path is not included in `ignoredRoutes` or `publicRoutes`. To prevent this behavior, choose one of:
-                                                                                                                                                                   redRoutes` or `publicRoutes`. To preve
-1. To make the route accessible to both signed in and signed out users, add "/profile/user_2eea4HTJHMWmw1leW363bHc5wR0" to the `publicRoutes` array passed to authMiddleware
-2. To prevent Clerk authentication from running at all, add "/profile/user_2eea4HTJHMWmw1leW363bHc5wR0" to the `ignoredRoutes` array passed to authMiddleware      iddleware
-3. Pass a custom `afterAuth` to authMiddleware, and replace Clerk's default behavior of redirecting unless a route is included in publicRoutes
-
-For additional information about middleware, please visit https://clerk.com/docs/nextjs/middleware
-(This log only appears in development mode, or if `debug: true` is passed to authMiddleware)
-INFO: Clerk: The request to /profile/user_2eea4HTJHMWmw1leW363bHc5wR0 is being redirected because there is no signed-in user, and the path is not included in `ignoredRoutes` or `publicRoutes`. To prevent this behavior, choose one of:                                                                                             redRoutes` or `publicRoutes`. To preve
-
-1. To make the route accessible to both signed in and signed out users, add "/profile/user_2eea4HTJHMWmw1leW363bHc5wR0" to the `publicRoutes` array passed to authMiddleware                                                                                                                                                          iddleware
-2. To prevent Clerk authentication from running at all, add "/profile/user_2eea4HTJHMWmw1leW363bHc5wR0" to the `ignoredRoutes` array passed to authMiddleware      
-3. Pass a custom `afterAuth` to authMiddleware, and replace Clerk's default behavior of redirecting unless a route is included in publicRoutes
-
-For additional information about middleware, please visit https://clerk.com/docs/nextjs/middleware
-(This log only appears in development mode, or if `debug: true` is passed to authMiddleware)
-
 -------------------------------------------------------------------------------------------------------------
 
 INFO: Clerk: The request to /search is being redirected because there is no signed-in user, and the path is not included in `ignoredRoutes` or `publicRoutes`. To prevent this behavior, choose one of:
