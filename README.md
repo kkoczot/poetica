@@ -49,6 +49,11 @@ email: mickiewicz@poetica.pl
 username: mickiewicz
 password: mickiewicz1@
 
+email: slowacki@poetica.pl
+username: slowacki
+password: slowacki1@
+
+
 -------------------------------------------------------------------------------------------------------------
 
 INFO: Clerk: The request to /search is being redirected because there is no signed-in user, and the path is not included in `ignoredRoutes` or `publicRoutes`. To prevent this behavior, choose one of:

@@ -165,6 +165,45 @@ export async function searchSimple(text: string) {
   }
 }
 
-export async function searchComplex() {
-  return null;
+export async function searchComplex({text, sortOrder, page, dpp}: {text: string, sortOrder: string, page: number, dpp: number}) { //dpp - display per page
+  connectToDB();
+  try {
+    // const foundAuthors = await Author.find({username: {$regex: text}}).sort({followers: }).skip(amountToSkip).limit(dpp)
+    const amountToSkip = (page - 1) * dpp;
+    let sortOption = null;
+    if (sortOrder === 'max') {
+      sortOption = { followersCount: -1 };
+    } else if (sortOrder === 'min') {
+      sortOption = { followersCount: 1 };
+    }
+
+    const pipeline = [
+      {
+        $project: {
+          username: 1,
+          id: 1,
+          followersCount: { $size: '$followers' },
+        },
+      },
+      {
+        $match: {
+          username: { $regex: text, $options: 'i' },
+        },
+      },
+    ];
+
+    if (sortOption) {
+      pipeline.push({ $sort: sortOption });
+    }
+    if (amountToSkip) {
+      pipeline.push({ $skip: amountToSkip });
+    }
+    pipeline.push({ $limit: dpp });
+
+    const authors = await Author.aggregate(pipeline);
+    const count = await Author.countDocuments({ username: { $regex: text, $options: 'i' } });
+    return [authors, count];
+  } catch (error: any) {
+    throw new Error("New error occured: ", error.message);
+  }
 }

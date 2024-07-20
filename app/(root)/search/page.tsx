@@ -39,28 +39,37 @@ const Page = () => {
 
   function handleShow() {
     const all: any[] = [];
+    all.push(<h3 className="text-white text-[20px] mt-6 mb-2">Authors:</h3>);
     if (data[0].length) {
       data[0].map((author: any) => all.push(
         <div className="my-2" key={author.username}>
           <p className="text-white">{author.username}</p>
         </div>
       ));
+    } else {
+      all.push(<p className="text-red-500">Authors not found</p>);
     }
+    all.push(<h3 className="text-white text-[20px] mt-6 mb-2">Folders:</h3>);
     if (data[1].length) {
       data[1].map((folder: any) => all.push(
         <div className="my-2" key={folder.title}>
           <p className="text-white">{folder.title}</p>
         </div>
       ));
+    } else {
+      all.push(<p className="text-red-500">Folders not found</p>);
     }
+    all.push(<h3 className="text-white text-[20px] mt-6 mb-2">Poems:</h3>);
     if (data[2].length) {
       data[2].map((poem: any) => all.push(
         <div className="my-2" key={poem.title}>
           <p className="text-white">{poem.title}</p>
         </div>
       ))
+    } else {
+      all.push(<p className="text-red-500">Poems not found</p>);
     }
-    return all.map(item => item);
+    return all;
   }
 
   return (
