@@ -1,22 +1,29 @@
 "use client";
 import Image from "next/image";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Input } from "@/components/ui/input";
 import { searchComplex } from "@/lib/actions/poem.actions";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { poemTypes } from "@/constants";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
 
 // Odpowiada za szukanie po: nazwie usera, nazwie wiersza, tagach || ogarnąć system stronicowania dla wyszukiwań
 // (Najpierw zrobić wyszukiwania / potem stronicowanie - patrzeć /favourite)
 
 const Page = () => {
-  const [search, setSearch] = useState("");
+  const dpp = 1;
+  const router = useRouter();
+  const pathname = usePathname();
+  const pageNum = Number(useSearchParams().get("page")) || 1;
+  const [search, setSearch] = useState({ text: "", poemType: "any", sortOrder: "any" });
   const [show, setShow] = useState(false);
   const [data, setData] = useState<any[]>([]);
+  const [howManyResults, setHowManyResults] = useState<number>(0)
 
   async function getData() {
-    const poems = await searchComplex() || [];
-    return poems;
+    const poems = await searchComplex({ ...search, page: pageNum, dpp: dpp }) || [];
+    setHowManyResults(poems.length ? poems[1] : 0);
+    return poems[0];
   }
 
   async function handleSearch() {
@@ -25,21 +32,132 @@ const Page = () => {
     setData(data);
   }
 
-  function countData() {
-    const poems = data?.length;
-    return poems > 0
-  }
+  useEffect(() => {
+    if (show) {
+      handleSearch();
+    }
+  }, [pageNum]);
 
   function handleShow() {
     const poems: any[] = [];
+    poems.push(<h3 className="text-white text-[20px] mt-6 mb-2">Poems:</h3>);
     if (data.length) {
       data.map((poem: any) => poems.push(
-        <div className="my-2" key={poem.username}>
-          <p className="text-white">{poem.username}</p>
+        <div className="my-2" key={poem.id}>
+          <p className="text-white">{poem.title}</p>
         </div>
       ));
+    } else {
+      poems.push(<p className="text-red-500">Poems not found</p>);
     }
     return poems.map(item => item);
+  }
+
+  function handleSearchParams(index: number) {
+    if (index === 1) return pathname;
+    else return `${pathname}?page=${index}`
+  }
+
+  function handlePagination() {
+    const pages = Math.ceil(howManyResults / dpp);
+    if (!pages || pageNum > pages) return false;
+    if (pages < 11) {
+      return Array.from({ length: pages }, (_, i) => (
+        <button
+          key={i + 1}
+          title={String(i + 1)}
+          disabled={pageNum === i + 1}
+          className={`border border-white rounded-lg px-[12px] py-1 text-white ${pageNum === i + 1 ? "bg-white !text-black" : ""} hover:opacity-80 hover:cursor-pointer`}
+          onClick={() => router.push(handleSearchParams(i + 1))}
+        >
+          {i + 1}
+        </button>
+      ))
+    } else {
+      if (pageNum < 5) {
+        const btnsToDisplay = Array.from({ length: pageNum + (6 - pageNum) }, (_, i) => (
+          <button
+            key={i + 1}
+            title={String(i + 1)}
+            disabled={pageNum === i + 1}
+            className={`border border-white rounded-lg px-[12px] py-1 text-white ${pageNum === i + 1 ? "bg-white !text-black" : ""} hover:opacity-80 hover:cursor-pointer`}
+            onClick={() => router.push(handleSearchParams(i + 1))}
+          >
+            {i + 1}
+          </button>
+        ))
+        btnsToDisplay.push(
+          <button
+            key={pages}
+            title={String(pages)}
+            className={`border border-white rounded-lg px-[12px] py-1 text-white hover:opacity-80 hover:cursor-pointer`}
+            onClick={() => router.push(handleSearchParams(pages))}
+          >
+            {pages}
+          </button>
+        );
+        return btnsToDisplay;
+      }
+      else if (pages - pageNum > 3) {
+        const iList = [-2, -1, 0, 1, 2];
+        const btnsToDisplay = Array.from({ length: iList.length }, (_, i) => (
+          <button
+            key={pageNum + iList[i]}
+            title={String(pageNum + iList[i])}
+            disabled={pageNum === pageNum + iList[i]}
+            className={`border border-white rounded-lg px-[12px] py-1 text-white ${pageNum === pageNum + iList[i] ? "bg-white !text-black" : ""} hover:opacity-80 hover:cursor-pointer`}
+            onClick={() => router.push(handleSearchParams(pageNum + iList[i]))}
+          >
+            {pageNum + iList[i]}
+          </button>
+        ));
+        btnsToDisplay.unshift(
+          <button
+            key={1}
+            title="1"
+            className={`border border-white rounded-lg px-[12px] py-1 text-white hover:opacity-80 hover:cursor-pointer`}
+            onClick={() => router.push(handleSearchParams(1))}
+          >
+            {1}
+          </button>
+        );
+        btnsToDisplay.push(
+          <button
+            key={pages}
+            title={String(pages)}
+            className={`border border-white rounded-lg px-[12px] py-1 text-white hover:opacity-80 hover:cursor-pointer`}
+            onClick={() => router.push(handleSearchParams(pages))}
+          >
+            {pages}
+          </button>
+        );
+        return btnsToDisplay;
+      } else {
+        const iList = pages - pageNum > 2 ? [-2, -1, 0] : pages - pageNum > 1 ? [-3, -2, -1, 0] : pages - pageNum > 0 ? [-4, -3, -2, -1, 0] : [-5, -4, -3, -2, -1, 0];
+        const btnsToDisplay = Array.from({ length: iList.length + pages - pageNum }, (_, i) => (
+          <button
+            key={pageNum + (i > (iList.length - 1) ? i - (iList.length - 1) : iList[i])}
+            title={String(pageNum + (i > (iList.length - 1) ? i - (iList.length - 1) : iList[i]))}
+            disabled={pageNum === pageNum + (i > (iList.length - 1) ? i - (iList.length - 1) : iList[i])}
+            className={`border border-white rounded-lg px-[12px] py-1 text-white ${pageNum === pageNum + (i > (iList.length - 1) ? i - (iList.length - 1) : iList[i]) ? "bg-white !text-black" : ""} hover:opacity-80 hover:cursor-pointer`}
+            onClick={() => router.push(handleSearchParams(pageNum + (i > (iList.length - 1) ? i - (iList.length - 1) : iList[i])))}
+          >
+            {pageNum + (i > (iList.length - 1) ? i - (iList.length - 1) : iList[i])}
+          </button>
+        ));
+        btnsToDisplay.unshift(
+          <button
+            key={1}
+            title="1"
+            className={`border border-white rounded-lg px-[12px] py-1 text-white hover:opacity-80 hover:cursor-pointer`}
+            onClick={() => router.push(handleSearchParams(1))}
+          >
+            {1}
+          </button>
+        );
+        return btnsToDisplay;
+      }
+    }
   }
 
   return (
@@ -54,7 +172,17 @@ const Page = () => {
           className="object-contain hover:cursor-pointer"
           onClick={handleSearch}
         />
-        <Select> {/* onValueChange={field.onChange} defaultValue={field.value} */}
+        <Select defaultValue="any" onValueChange={e => setSearch(prev => ({ ...prev, sortOrder: e }))}> {/* onValueChange={field.onChange} defaultValue={field.value} */}
+          <SelectTrigger>
+            <SelectValue placeholder="Select/Filter by poems amount" />
+          </SelectTrigger>
+          <SelectContent className="bg-dark-4">
+            <SelectItem value="max" className="no-focus border-dark-4 bg-dark-3 text-light-2 hover:cursor-pointer">Max</SelectItem>
+            <SelectItem value="any" className="no-focus border-dark-4 bg-dark-3 text-light-2 hover:cursor-pointer">Any</SelectItem>
+            <SelectItem value="min" className="no-focus border-dark-4 bg-dark-3 text-light-2 hover:cursor-pointer">Min</SelectItem>
+          </SelectContent>
+        </Select>
+        <Select defaultValue="any" onValueChange={e => setSearch(prev => ({ ...prev, poemType: e }))}> {/* onValueChange={field.onChange} defaultValue={field.value} */}
           <SelectTrigger>
             <SelectValue placeholder="Select poem type" />
           </SelectTrigger>
@@ -69,15 +197,22 @@ const Page = () => {
         </Select>
         <Input
           id="text"
-          value={search}
-          onChange={e => setSearch(e.target.value)}
+          value={search.text}
+          onChange={e => setSearch(prev => ({ ...prev, text: e.target.value }))}
           placeholder="Search poem title/content"
         />
       </div>
       <div className="my-10">
         {
-          show ? countData() ? handleShow() : <p className="text-red-500">No results found!</p> : null
+          show ? handleShow() : null
         }
+      </div>
+      <div className="flex justify-center border border-white p-5 rounded-lg mt-[60px]">
+        <div className="flex space-x-4">
+          {
+            handlePagination() || <button disabled className="text-black bg-white border border-white px-[12px] py-1 rounded-lg">1</button>
+          }
+        </div>
       </div>
     </section>
   )

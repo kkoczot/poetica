@@ -168,7 +168,6 @@ export async function searchSimple(text: string) {
 export async function searchComplex({text, sortOrder, page, dpp}: {text: string, sortOrder: string, page: number, dpp: number}) { //dpp - display per page
   connectToDB();
   try {
-    // const foundAuthors = await Author.find({username: {$regex: text}}).sort({followers: }).skip(amountToSkip).limit(dpp)
     const amountToSkip = (page - 1) * dpp;
     let sortOption = null;
     if (sortOrder === 'max') {
@@ -182,6 +181,7 @@ export async function searchComplex({text, sortOrder, page, dpp}: {text: string,
         $project: {
           username: 1,
           id: 1,
+          image: 1,
           followersCount: { $size: '$followers' },
         },
       },

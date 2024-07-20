@@ -103,6 +103,46 @@ export async function searchSimple(text: string) {
   }
 }
 
-export async function searchComplex() {
-  return null;
+export async function searchComplex({text, sortOrder, page, dpp}: {text: string, sortOrder: string, page: number, dpp: number}) { //dpp - display per page
+  connectToDB();
+  try {
+    const amountToSkip = (page - 1) * dpp;
+    let sortOption = null;
+    if (sortOrder === 'max') {
+      sortOption = { poemsCount: -1 };
+    } else if (sortOrder === 'min') {
+      sortOption = { poemsCount: 1 };
+    }
+
+    const pipeline = [
+      {
+        $project: {
+          title: 1,
+          authorId: 1,
+          shared: 1,
+          poemsCount: { $size: '$poems' },
+        },
+      },
+      {
+        $match: {
+          title: { $regex: text, $options: 'i' },
+          shared: true,
+        },
+      },
+    ];
+
+    if (sortOption) {
+      pipeline.push({ $sort: sortOption });
+    }
+    if (amountToSkip) {
+      pipeline.push({ $skip: amountToSkip });
+    }
+    pipeline.push({ $limit: dpp });
+
+    const folders = await Folder.aggregate(pipeline);
+    const count = await Folder.countDocuments({ title: { $regex: text, $options: 'i' }, shared: true });
+    return [folders, count];
+  } catch (error: any) {
+    throw new Error("New error occured: ", error.message);
+  }
 }

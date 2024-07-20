@@ -168,6 +168,104 @@ export async function searchSimple(text: string) {
   }
 }
 
-export async function searchComplex() {
-  return null;
+export async function searchComplex({ text, poemType, sortOrder, page, dpp }: { text: string, poemType: string, sortOrder: string, page: number, dpp: number }) { //dpp - display per page
+  connectToDB();
+  console.log(">>> text:", text);
+  console.log(">>> poemType:", poemType);
+  console.log(">>> sortOrder:", sortOrder);
+  try {
+    const amountToSkip = (page - 1) * dpp;
+    let sortOption = null;
+    if (sortOrder === 'max') {
+      sortOption = { favouriteCount: -1 };
+    } else if (sortOrder === 'min') {
+      sortOption = { favouriteCount: 1 };
+    }
+
+    const pipeline = [
+      {
+        $match: {
+          title: { $regex: text, $options: 'i' },
+        },
+      },
+      {
+        $project: {
+          title: 1,
+          content: 1,
+          authorId: 1,
+          type: 1,
+          folderId: 1,
+          favouritesCount: { $size: '$favourite' },
+        },
+      },
+    ];
+
+    // const pipeline = [
+    //   {
+    //     $match: {
+    //       title: { $regex: text, $options: 'i' },
+    //     },
+    //   },
+    //   {
+    //     $lookup: {
+    //       from: 'Folder',
+    //       localField: 'folderId',
+    //       foreignField: '_id',
+    //       as: 'folder',
+    //     },
+    //   },
+    //   {
+    //     $unwind: '$folder',
+    //   },
+    // {
+    //   $count: 'poemCount',
+    // },
+    //   {
+    //     $match: {
+    //       'folder.shared': true,
+    //     },
+    //   },
+    //   {
+    //     $project: {
+    //       title: 1,
+    //       content: 1,
+    //       authorId: 1,
+    //       type: 1,
+    //       folderId: 1,
+    //       folder: 1,
+    //       favouritesCount: { $size: '$favourite' },
+    //     },
+    //   },
+    // ];
+
+    if (poemType !== "any") {
+      pipeline.push({
+        $match: {
+          type: poemType,
+        },
+      })
+    }
+
+    if (sortOption) {
+      pipeline.push({ $sort: sortOption });
+    }
+
+    if (amountToSkip) {
+      pipeline.push({ $skip: amountToSkip });
+    }
+
+    pipeline.push({ $limit: dpp });
+
+    const poems = await Poem.aggregate(pipeline);
+    // const count = poems.length > 0 ? poems[0].poemCount : 0;
+    let count;
+    if (poemType !== "any") {
+      count = await Poem.countDocuments({ title: { $regex: text, $options: 'i' }, type: poemType });
+    } else {
+      count = await Poem.countDocuments({ title: { $regex: text, $options: 'i' } });
+    }
+    return [poems, count];
+  } catch (error: any) {
+    throw new Error("New error occured: ", error.message);
+  }
 }
