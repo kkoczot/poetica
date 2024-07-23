@@ -158,7 +158,7 @@ export async function getUsersIds(id: string, convertFrom: "MongoDB" | "Clerk") 
 export async function searchSimple(text: string) {
   connectToDB();
   try {
-    const foundAuthors = await Author.find({ username: { $regex: text } }).select("id username").limit(5);
+    const foundAuthors = await Author.find({ username: { $regex: text } }).select("id image username").limit(5);
     return foundAuthors || [];
   } catch (error) {
     throw new Error("Failed to search for authors in searchSimple()");

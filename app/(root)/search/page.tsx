@@ -5,6 +5,7 @@ import { Input } from "@/components/ui/input";
 import { searchSimple as searchSimpleAuthors } from "@/lib/actions/user.actions";
 import { searchSimple as searchSimpleFolders } from "@/lib/actions/folder.actions";
 import { searchSimple as searchSimplePoems } from "@/lib/actions/poem.actions";
+import SearchCard from "@/components/shared/SearchCard";
 
 // Odpowiada za szukanie po: nazwie usera, nazwie wiersza, tagach || ogarnąć system stronicowania dla wyszukiwań
 // (Najpierw zrobić wyszukiwania / potem stronicowanie - patrzeć /favourite)
@@ -42,9 +43,7 @@ const Page = () => {
     all.push(<h3 className="text-white text-[20px] mt-6 mb-2">Authors:</h3>);
     if (data[0].length) {
       data[0].map((author: any) => all.push(
-        <div className="my-2" key={author.username}>
-          <p className="text-white">{author.username}</p>
-        </div>
+        <SearchCard key={String(author.id)} type="author" textInfo={`@${author.username}`} url={`/profile/${author.id}`} linkInfo="profile" img={author.image} />
       ));
     } else {
       all.push(<p className="text-red-500">Authors not found</p>);
@@ -52,9 +51,7 @@ const Page = () => {
     all.push(<h3 className="text-white text-[20px] mt-6 mb-2">Folders:</h3>);
     if (data[1].length) {
       data[1].map((folder: any) => all.push(
-        <div className="my-2" key={folder.title}>
-          <p className="text-white">{folder.title}</p>
-        </div>
+        <SearchCard key={String(folder._id)} type="folder" textInfo={folder.title} url={"uzupełnić!"} linkInfo="folder" />
       ));
     } else {
       all.push(<p className="text-red-500">Folders not found</p>);
@@ -62,9 +59,7 @@ const Page = () => {
     all.push(<h3 className="text-white text-[20px] mt-6 mb-2">Poems:</h3>);
     if (data[2].length) {
       data[2].map((poem: any) => all.push(
-        <div className="my-2" key={poem.title}>
-          <p className="text-white">{poem.title}</p>
-        </div>
+        <SearchCard key={String(poem._id)} type="poem" textInfo={poem.title} url={"uzupełnić!"} linkInfo="poem" />
       ))
     } else {
       all.push(<p className="text-red-500">Poems not found</p>);

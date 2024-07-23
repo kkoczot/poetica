@@ -11,9 +11,9 @@ function SearchBtns() {
 
   return (
     <div>
-      <h1 className="head-text mb-6">Search</h1>
+      <h1 className="head-text mb-8">Search</h1>
       <h2 className="text-white font-semibold text-[24px] mb-3">Find:</h2>
-      <div className="flex gap-5">
+      <div className="flex gap-5 mb-6">
         <Link
           href="/search"
           className={`text-white px-6 py-1 border border-white rounded-lg hover:text-black hover:bg-white hover:opacity-80 ${checkIfActive("/search")}`}

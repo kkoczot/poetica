@@ -5,12 +5,13 @@ import { Input } from "@/components/ui/input";
 import { searchComplex } from "@/lib/actions/user.actions";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useRouter, useSearchParams, usePathname } from "next/navigation";
+import SearchCard from "@/components/shared/SearchCard";
 
 // Odpowiada za szukanie po: nazwie usera, nazwie wiersza, tagach || ogarnąć system stronicowania dla wyszukiwań
 // (Najpierw zrobić wyszukiwania / potem stronicowanie - patrzeć /favourite)
 
 const Page = () => {
-  const dpp = 1;
+  const dpp = 20;
   const router = useRouter();
   const pathname = usePathname();
   const pageNum = Number(useSearchParams().get("page")) || 1;
@@ -25,15 +26,16 @@ const Page = () => {
     return authors[0];
   }
 
-  async function handleSearch() {
+  async function handleSearch(refatch: Boolean) {
     const data = await getData();
     !show && setShow(prev => !prev);
     setData(data);
+    refatch && router.push(pathname);
   }
 
   useEffect(() => {
     if (show) {
-      handleSearch()
+      handleSearch(false)
     }
   }, [pageNum]);
 
@@ -42,9 +44,7 @@ const Page = () => {
     authors.push(<h3 className="text-white text-[20px] mt-6 mb-2">Authors:</h3>);
     if (data.length) {
       data.map((author: any) => authors.push(
-        <div className="my-2" key={author.id}>
-          <p className="text-white">{author.username}</p>
-        </div>
+        <SearchCard key={String(author.id)} type="author" textInfo={`@${author.username}`} url={`/profile/${author.id}`} linkInfo="profile" img={author.image} />
       ));
     } else {
       authors.push(<p className="text-red-500">Authors not found</p>);
@@ -59,7 +59,7 @@ const Page = () => {
 
   function handlePagination() {
     const pages = Math.ceil(howManyResults / dpp);
-    if (!pages || pageNum > pages) return false;
+    if (!pages || pageNum > pages) return <button disabled className="text-black bg-white border border-white px-[12px] py-1 rounded-lg">1</button>;
     if (pages < 11) {
       return Array.from({ length: pages }, (_, i) => (
         <button
@@ -169,7 +169,7 @@ const Page = () => {
           width={24}
           height={24}
           className="object-contain hover:cursor-pointer"
-          onClick={handleSearch}
+          onClick={() => handleSearch(true)}
         />
         <Select defaultValue="any" onValueChange={e => setSearch(prev => ({ ...prev, sortOrder: e }))}> {/* onValueChange={field.onChange} defaultValue={field.value} */}
           <SelectTrigger>
@@ -193,13 +193,10 @@ const Page = () => {
           show ? handleShow() : null
         }
       </div>
-      <div className="my-10">
-        <p className="text-white">--- Stronicowanie ---</p>
-      </div>
       <div className="flex justify-center border border-white p-5 rounded-lg mt-[60px]">
         <div className="flex space-x-4">
           {
-            handlePagination() || <button disabled className="text-black bg-white border border-white px-[12px] py-1 rounded-lg">1</button>
+            handlePagination()
           }
         </div>
       </div>

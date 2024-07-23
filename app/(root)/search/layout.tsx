@@ -10,14 +10,10 @@ export const metadata: Metadata = {
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <div className="w-full max-w-4xl">
-      <div>
-        <SearchBtns />
-      </div>
-      <div>
-        <Suspense fallback={<p className="text-white text-9xl">Loading...</p>}>
-          {children}
-        </Suspense>
-      </div>
+      <SearchBtns />
+      <Suspense fallback={<p className="text-white text-9xl">Loading...</p>}>
+        {children}
+      </Suspense>
     </div>
   );
 }

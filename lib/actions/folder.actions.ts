@@ -96,7 +96,7 @@ export async function getAllUserFolders(userId: string) {
 export async function searchSimple(text: string) {
   connectToDB();
   try {
-    const foundFolders = await Folder.find({ title: { $regex: text } }).select("title").limit(5);
+    const foundFolders = await Folder.find({ title: { $regex: text }, shared: true }).select("title").limit(5);
     return foundFolders || [];
   } catch (error) {
     throw new Error("Failed to search for folders in searchSimple()");
