@@ -7,7 +7,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { poemTypes } from "@/constants";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import SearchCard from "@/components/shared/SearchCard";
-import handlePagination from "@/components/SearchFunctions";
+import handlePagination from "@/components/PaginationFunctions";
 
 // Odpowiada za szukanie po: nazwie usera, nazwie wiersza, tagach || ogarnąć system stronicowania dla wyszukiwań
 // (Najpierw zrobić wyszukiwania / potem stronicowanie - patrzeć /favourite)

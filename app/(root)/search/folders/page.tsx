@@ -6,7 +6,7 @@ import { searchComplex } from "@/lib/actions/folder.actions";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import SearchCard from "@/components/shared/SearchCard";
-import handlePagination from "@/components/SearchFunctions";
+import handlePagination from "@/components/PaginationFunctions";
 
 // Odpowiada za szukanie po: nazwie usera, nazwie wiersza, tagach || ogarnąć system stronicowania dla wyszukiwań
 // (Najpierw zrobić wyszukiwania / potem stronicowanie - patrzeć /favourite)
