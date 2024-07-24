@@ -22,9 +22,9 @@ const Page = () => {
   const [howManyResults, setHowManyResults] = useState<number>(0);
 
   async function getData() {
-    const folders = await searchComplex({ ...search, page: pageNum, dpp: dpp }) || [];
-    setHowManyResults(folders.length ? folders[1] : 0);
-    return folders[0];
+    const results = await searchComplex({ ...search, page: pageNum, dpp: dpp }) || [];
+    setHowManyResults(results.length ? results[1] : 0);
+    return results[0];
   }
 
   async function handleSearch(refatch: Boolean) {
@@ -45,7 +45,7 @@ const Page = () => {
     folders.push(<h3 className="text-white text-[20px] mt-6 mb-2">Folders:</h3>);
     if (data.length) {
       data.map((folder: any) => folders.push(
-        <SearchCard key={String(folder._id)} type="folder" textInfo={folder.title} url={"uzupełnić!"} linkInfo="folder" />
+        <SearchCard key={String(folder._id)} type="folder" textInfo={folder.title} url={`/profile/${folder.authorDetails.id}/${folder._id}`} linkInfo="folder" />
       ));
     } else {
       folders.push(<p className="text-red-500">Folders not found</p>);

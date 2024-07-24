@@ -23,15 +23,16 @@ const Page = () => {
   const [howManyResults, setHowManyResults] = useState<number>(0)
 
   async function getData() {
-    const poems = await searchComplex({ ...search, page: pageNum, dpp: dpp }) || [];
-    setHowManyResults(poems.length ? poems[1] : 0);
-    return poems[0];
+    const results = await searchComplex({ ...search, page: pageNum, dpp: dpp }) || [];
+    setHowManyResults(results.length ? results[1] : 0);
+    return results[0];
   }
 
   async function handleSearch(refatch: Boolean) {
     const data = await getData();
     !show && setShow(prev => !prev);
     setData(data);
+    console.log(data);
     refatch && router.push(pathname);
   }
 
@@ -46,7 +47,7 @@ const Page = () => {
     poems.push(<h3 className="text-white text-[20px] mt-6 mb-2">Poems:</h3>);
     if (data.length) {
       data.map((poem: any) => poems.push(
-        <SearchCard key={String(poem._id)} type="poem" textInfo={poem.title} url={"uzupełnić!"} linkInfo="poem" />
+        <SearchCard key={String(poem._id)} type="poem" textInfo={poem.title} url={`/profile/${poem.authorDetails.id}/${poem.folderId}/${poem._id}`} linkInfo="poem" />
       ));
     } else {
       poems.push(<p className="text-red-500">Poems not found</p>);

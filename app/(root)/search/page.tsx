@@ -51,7 +51,7 @@ const Page = () => {
     all.push(<h3 className="text-white text-[20px] mt-6 mb-2">Folders:</h3>);
     if (data[1].length) {
       data[1].map((folder: any) => all.push(
-        <SearchCard key={String(folder._id)} type="folder" textInfo={folder.title} url={"uzupełnić!"} linkInfo="folder" />
+        <SearchCard key={String(folder._id)} type="folder" textInfo={folder.title} url={`/profile/${folder.authorId.id}/${folder._id}`} linkInfo="folder" />
       ));
     } else {
       all.push(<p className="text-red-500">Folders not found</p>);
@@ -59,7 +59,7 @@ const Page = () => {
     all.push(<h3 className="text-white text-[20px] mt-6 mb-2">Poems:</h3>);
     if (data[2].length) {
       data[2].map((poem: any) => all.push(
-        <SearchCard key={String(poem._id)} type="poem" textInfo={poem.title} url={"uzupełnić!"} linkInfo="poem" />
+        <SearchCard key={String(poem._id)} type="poem" textInfo={poem.title} url={`/profile/${poem.authorId.id}/${poem.folderId}/${poem._id}`} linkInfo="poem" />
       ))
     } else {
       all.push(<p className="text-red-500">Poems not found</p>);

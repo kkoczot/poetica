@@ -22,9 +22,11 @@ const Page = () => {
   const [howManyResults, setHowManyResults] = useState<number>(0);
 
   async function getData() {
-    const authors = await searchComplex({ ...search, page: pageNum, dpp: dpp }) || [];
-    setHowManyResults(authors.length ? authors[1] : 0);
-    return authors[0];
+    const results = await searchComplex({ ...search, page: pageNum, dpp: dpp }) || [];
+    console.log(">>> results[0]: ", results[0]);
+    console.log(">>> results[1]: ", results[1]);
+    setHowManyResults(results.length ? results[1] : 0);
+    return results[0];
   }
 
   async function handleSearch(refatch: Boolean) {

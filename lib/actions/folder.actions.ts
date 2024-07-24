@@ -5,6 +5,7 @@ import Author from "../models/user.model";
 import Folder from "../models/folder.model";
 import Poem from "../models/poem.model";
 import { revalidatePath } from "next/cache";
+import { PipelineStage } from "mongoose";
 
 interface Params {
   authorId: string,
@@ -96,31 +97,55 @@ export async function getAllUserFolders(userId: string) {
 export async function searchSimple(text: string) {
   connectToDB();
   try {
-    const foundFolders = await Folder.find({ title: { $regex: text }, shared: true }).select("title").limit(5);
-    return foundFolders || [];
+    const foundFolders = await Folder.find({ title: { $regex: text }, shared: true }).select("title authorId").populate({path: "authorId", select: "id"});
+    const plainFolders = foundFolders.map(folder => JSON.parse(JSON.stringify(folder)));
+    return plainFolders || [];
   } catch (error) {
     throw new Error("Failed to search for folders in searchSimple()");
   }
 }
 
-export async function searchComplex({text, sortOrder, page, dpp}: {text: string, sortOrder: string, page: number, dpp: number}) { //dpp - display per page
+export async function searchComplex({text, sortOrder, page, dpp}: {text: string, sortOrder: string, page: number, dpp: number}): Promise<[any[], number]> { //dpp - display per page
   connectToDB();
   try {
     const amountToSkip = (page - 1) * dpp;
-    let sortOption = null;
+
+    type SortOption = Record<string, 1 | -1>;
+
+    let sortOption: SortOption | null = null;
     if (sortOrder === 'max') {
       sortOption = { poemsCount: -1 };
     } else if (sortOrder === 'min') {
       sortOption = { poemsCount: 1 };
     }
 
-    const pipeline = [
+    const pipeline: PipelineStage[] = [
       {
         $project: {
           title: 1,
           authorId: 1,
           shared: 1,
           poemsCount: { $size: '$poems' },
+        },
+      },
+      {
+        $lookup: {
+          from: 'authors',
+          localField: 'authorId',
+          foreignField: '_id',
+          as: 'authorDetails',
+        }
+      },
+      {
+        $unwind: '$authorDetails',
+      },
+      {
+        $project: {
+          title: 1,
+          authorId: 1,
+          shared: 1,
+          poemsCount: 1,
+          'authorDetails.id': 1,
         },
       },
       {
@@ -141,7 +166,10 @@ export async function searchComplex({text, sortOrder, page, dpp}: {text: string,
 
     const folders = await Folder.aggregate(pipeline);
     const count = await Folder.countDocuments({ title: { $regex: text, $options: 'i' }, shared: true });
-    return [folders, count];
+
+    const plainFolders = folders.map(folder => JSON.parse(JSON.stringify(folder)));
+    
+    return [plainFolders, count];
   } catch (error: any) {
     throw new Error("New error occured: ", error.message);
   }

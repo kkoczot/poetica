@@ -4,6 +4,7 @@ import { revalidatePath } from "next/cache";
 import Author from "../models/user.model";
 import { connectToDB } from "../mongoose";
 import { createFolder } from "./folder.actions";
+import { PipelineStage } from "mongoose";
 
 interface Params {
   userId: string,
@@ -159,24 +160,28 @@ export async function searchSimple(text: string) {
   connectToDB();
   try {
     const foundAuthors = await Author.find({ username: { $regex: text } }).select("id image username").limit(5);
-    return foundAuthors || [];
+    const plainAuthors = foundAuthors.map(author => JSON.parse(JSON.stringify(author)));
+    return plainAuthors || [];
   } catch (error) {
     throw new Error("Failed to search for authors in searchSimple()");
   }
 }
 
-export async function searchComplex({text, sortOrder, page, dpp}: {text: string, sortOrder: string, page: number, dpp: number}) { //dpp - display per page
+export async function searchComplex({text, sortOrder, page, dpp}: {text: string, sortOrder: string, page: number, dpp: number}): Promise<[any[], number]> { //dpp - display per page
   connectToDB();
   try {
     const amountToSkip = (page - 1) * dpp;
-    let sortOption = null;
+
+    type SortOption = Record<string, 1 | -1>;
+    
+    let sortOption: SortOption | null = null;
     if (sortOrder === 'max') {
       sortOption = { followersCount: -1 };
     } else if (sortOrder === 'min') {
       sortOption = { followersCount: 1 };
     }
 
-    const pipeline = [
+    const pipeline: PipelineStage[] = [
       {
         $project: {
           username: 1,
@@ -202,7 +207,10 @@ export async function searchComplex({text, sortOrder, page, dpp}: {text: string,
 
     const authors = await Author.aggregate(pipeline);
     const count = await Author.countDocuments({ username: { $regex: text, $options: 'i' } });
-    return [authors, count];
+
+    const plainAuthors = authors.map(author => JSON.parse(JSON.stringify(author)));
+    
+    return [plainAuthors, count];
   } catch (error: any) {
     throw new Error("New error occured: ", error.message);
   }
