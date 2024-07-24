@@ -18,7 +18,7 @@ function LeftSidebar() {
           const isAcive = (pathname.includes(l.route) && l.route.length > 1) || pathname === l.route;
           if (l.route === "/profile") l.route = `${l.route}/${userId}`;
           return (
-            <Link key={l.label} href={l.route} className={`${isAcive ? "bg-primary-500" : ""} leftsidebar_link`}>
+            <Link key={l.label} href={l.route} className={`${isAcive ? "bg-green-600" : ""} leftsidebar_link`}>
               <Image src={l.imgURL} alt={l.label} width={24} height={24} />
               <p className="text-light-1 max-lg:hidden">{l.label}</p>
             </Link>
