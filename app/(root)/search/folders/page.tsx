@@ -59,32 +59,41 @@ const Page = () => {
 
   return (
     <section>
-      <h3 className="text-white text-[20px] my-4">Results of SearchFilters Folders:</h3>
-      <div className="flex gap-4 flex-row-reverse">
-        <Image
-          src="/assets/search-gray.svg"
-          alt="search"
-          width={24}
-          height={24}
-          className="object-contain hover:cursor-pointer"
-          onClick={() => handleSearch(true)}
-        />
-        <Select defaultValue="any" onValueChange={e => setSearch(prev => ({ ...prev, sortOrder: e }))}> {/* onValueChange={field.onChange} defaultValue={field.value} */}
-          <SelectTrigger>
-            <SelectValue placeholder="Select/Filter by poems amount" />
-          </SelectTrigger>
-          <SelectContent className="bg-dark-4">
-            <SelectItem value="max" className="no-focus border-dark-4 bg-dark-3 text-light-2 hover:cursor-pointer">Max</SelectItem>
-            <SelectItem value="any" className="no-focus border-dark-4 bg-dark-3 text-light-2 hover:cursor-pointer">Any</SelectItem>
-            <SelectItem value="min" className="no-focus border-dark-4 bg-dark-3 text-light-2 hover:cursor-pointer">Min</SelectItem>
-          </SelectContent>
-        </Select>
-        <Input
-          id="text"
-          value={search.text}
-          onChange={e => setSearch(prev => ({ ...prev, text: e.target.value }))}
-          placeholder="Search folder title"
-        />
+      <h3 className="text-white text-[20px] my-4">SearchFilters for Folders:</h3>
+      <div className="flex flex-col gap-8">
+        <div className="border-l-4 border-green-600 pt-2 pb-5  pl-4">
+          <label htmlFor="text" className="text-white block mb-1">Search title</label>
+          <Input
+            id="text"
+            value={search.text}
+            onChange={e => setSearch(prev => ({ ...prev, text: e.target.value }))}
+            placeholder="Search folder title"
+            maxLength={50}
+          />
+        </div>
+        <div className="border-l-4 border-green-600 pt-2 pb-5  pl-4">
+          <label htmlFor="sort" className="text-white block mb-1">Sort by amount of poems</label>
+          <div className="flex gap-4">
+            <Select defaultValue="any" onValueChange={e => setSearch(prev => ({ ...prev, sortOrder: e }))}> {/* onValueChange={field.onChange} defaultValue={field.value} */}
+              <SelectTrigger id="sort">
+                <SelectValue placeholder="Select/Filter by poems amount" />
+              </SelectTrigger>
+              <SelectContent className="bg-dark-4">
+                <SelectItem value="max" className="no-focus border-dark-4 bg-dark-3 text-light-2 hover:cursor-pointer">Max</SelectItem>
+                <SelectItem value="any" className="no-focus border-dark-4 bg-dark-3 text-light-2 hover:cursor-pointer">Any</SelectItem>
+                <SelectItem value="min" className="no-focus border-dark-4 bg-dark-3 text-light-2 hover:cursor-pointer">Min</SelectItem>
+              </SelectContent>
+            </Select>
+            <Image
+              src="/assets/search-gray.svg"
+              alt="search"
+              width={24}
+              height={24}
+              className="object-contain hover:cursor-pointer"
+              onClick={() => handleSearch(true)}
+            />
+          </div>
+        </div>
       </div>
       <div className="my-10">
         {

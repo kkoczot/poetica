@@ -40,7 +40,7 @@ const Page = () => {
 
   function handleShow() {
     const all: any[] = [];
-    all.push(<h3 className="text-white text-[20px] mt-6 mb-2">Authors:</h3>);
+    all.push(<h3 className="text-white text-[20px] mt-10 mb-2">Authors:</h3>);
     if (data[0].length) {
       data[0].map((author: any) => all.push(
         <SearchCard key={String(author.id)} type="author" textInfo={`@${author.username}`} url={`/profile/${author.id}`} linkInfo="profile" img={author.image} />
@@ -48,7 +48,7 @@ const Page = () => {
     } else {
       all.push(<p className="text-red-500">Authors not found</p>);
     }
-    all.push(<h3 className="text-white text-[20px] mt-6 mb-2">Folders:</h3>);
+    all.push(<h3 className="text-white text-[20px] mt-10 mb-2">Folders:</h3>);
     if (data[1].length) {
       data[1].map((folder: any) => all.push(
         <SearchCard key={String(folder._id)} type="folder" textInfo={folder.title} url={`/profile/${folder.authorId.id}/${folder._id}`} linkInfo="folder" />
@@ -56,7 +56,7 @@ const Page = () => {
     } else {
       all.push(<p className="text-red-500">Folders not found</p>);
     }
-    all.push(<h3 className="text-white text-[20px] mt-6 mb-2">Poems:</h3>);
+    all.push(<h3 className="text-white text-[20px] mt-10 mb-2">Poems:</h3>);
     if (data[2].length) {
       data[2].map((poem: any) => all.push(
         <SearchCard key={String(poem._id)} type="poem" textInfo={poem.title} url={`/profile/${poem.authorId.id}/${poem.folderId}/${poem._id}`} linkInfo="poem" />
@@ -69,22 +69,27 @@ const Page = () => {
 
   return (
     <section>
-      <h3 className="text-white text-[20px] my-4">Results of SearchFilters All/Default:</h3>
-      <div className="flex gap-4 flex-row-reverse">
-        <Image
-          src="/assets/search-gray.svg"
-          alt="search"
-          width={24}
-          height={24}
-          className="object-contain hover:cursor-pointer"
-          onClick={handleSearch}
-        />
-        <Input
-          id="text"
-          value={search}
-          onChange={e => setSearch(e.target.value)}
-          placeholder="Search everything"
-        />
+      <h3 className="text-white text-[20px] my-4">SearchFilters for All/Default:</h3>
+      <div className="flex flex-col border-l-4 border-green-600 pt-2 pb-3 pl-4">
+        <label htmlFor="text" className="text-white block mb-1">Search everything</label>
+        <div className="flex gap-4">
+          <Input
+            id="text"
+            value={search}
+            onChange={e => setSearch(e.target.value)}
+            placeholder="username/folder_title/poem_title"
+            maxLength={50}
+          />
+          <Image
+            src="/assets/search-gray.svg"
+            alt="search"
+            width={24}
+            height={24}
+            className="object-contain hover:cursor-pointer"
+            onClick={handleSearch}
+          />
+        </div>
+        <p className="text-gray-400 text-subtle-medium mt-1">*displays up to 5 results for every category</p>
       </div>
       <div className="my-10">
         {

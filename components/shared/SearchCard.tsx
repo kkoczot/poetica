@@ -12,9 +12,9 @@ interface Params {
 const SearchCard = ({ type, textInfo, img, url, linkInfo }: Params) => {
   return (
     <div className="flex justify-between py-5 pr-10 pl-8 my-4 bg-dark-3 rounded-lg items-center">
-      <div className="flex gap-2">
+      <div className="flex gap-2 items-center">
         {
-          type === "author" && <Image src={img!} alt="Author's avatar" width={26} height={26} className="border-2 border-green-600 rounded-full" />
+          type === "author" && <Image src={img!} alt="Author's avatar" width={28} height={28} className="border-2 border-green-600 rounded-full aspect-square" />
         }
         {
           type !== "author" && <div className="h-3 w-3 rounded-full bg-green-500 self-center mr-1" />
