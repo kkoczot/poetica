@@ -20,8 +20,8 @@ export const sidebarLinks = [
     label: "Authors for u",
   },
   {
-    imgURL: "/assets/community.svg",
-    route: "/notifs",
+    imgURL: "/assets/bell.svg",
+    route: "/notifications",
     label: "Notifications",
   },
   {

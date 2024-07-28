@@ -11,6 +11,7 @@ const userSchema = new mongoose.Schema({
   following: [{ type: mongoose.Schema.Types.ObjectId, ref: "Author" }], // user is following other users
   folders: [{ type: mongoose.Schema.Types.ObjectId, ref: "Folder" }], // user has folders
   likes: [{type: mongoose.Schema.Types.ObjectId, ref: "Poems"}], // user likes poems
+  readNotifs: [{type: mongoose.Schema.Types.ObjectId, ref: "Notifs"}], //notifs' id that user has read
 });
 
 const Author = mongoose.models.Author || mongoose.model("Author", userSchema);
