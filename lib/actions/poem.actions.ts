@@ -76,7 +76,6 @@ export async function editPoem({ poemId, title, content, type, folderDest, oldFo
   }
 }
 
-
 export async function fetchPoem(poemId: string) {
   connectToDB();
   try {
@@ -84,6 +83,21 @@ export async function fetchPoem(poemId: string) {
     return res;
   } catch (error: any) {
     throw new Error("Failed to fetch poem data");
+  }
+}
+
+export async function fetchPoemComplex(userId: string | null, skip: number, limit: number) {
+  connectToDB();
+
+  try {
+    let ids = {_id: null};
+    if (userId) {
+      ids = await getUsersIds(userId, "Clerk");
+    }
+    const poem = await Poem.find({ authorId: { $ne: ids._id } }).select("title type content").skip(skip).limit(limit);
+    return JSON.parse(JSON.stringify(poem));
+  } catch (error: any) {
+    throw new Error("Error occured in fetchPoemComplex: ", error.message);
   }
 }
 
