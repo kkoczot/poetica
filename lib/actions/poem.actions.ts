@@ -86,17 +86,21 @@ export async function fetchPoem(poemId: string) {
   }
 }
 
-export async function fetchPoemComplex(userId: string | null, skip: number, limit: number) {
+export async function fetchPoemComplex(userId: string | null, action: "count" | "get", skip?: number, limit?: number) {
   connectToDB();
-  // console.log("skip: ", skip);
-  // console.log("limit: ", limit);
   try {
-    let ids = {_id: null};
+    let ids = { _id: null };
     if (userId) {
       ids = await getUsersIds(userId, "Clerk");
     }
-    const poem = await Poem.find({ authorId: { $ne: ids._id } }).select("title type content").skip(skip).limit(limit);
-    return JSON.parse(JSON.stringify(poem));
+    if (action === "count") {
+      const amount = await Poem.countDocuments({ authorId: { $ne: ids._id } });
+      return amount;
+    }
+    if (action === "get") {
+      const poem = await Poem.find({ authorId: { $ne: ids._id } }).select("title type content").skip(skip!).limit(limit!);
+      return JSON.parse(JSON.stringify(poem));
+    }
   } catch (error: any) {
     throw new Error("Error occured in fetchPoemComplex: ", error.message);
   }
