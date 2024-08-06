@@ -88,7 +88,8 @@ export async function fetchPoem(poemId: string) {
 
 export async function fetchPoemComplex(userId: string | null, skip: number, limit: number) {
   connectToDB();
-
+  // console.log("skip: ", skip);
+  // console.log("limit: ", limit);
   try {
     let ids = {_id: null};
     if (userId) {
