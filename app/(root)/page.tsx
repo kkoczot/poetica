@@ -21,7 +21,7 @@ function Home() {
     console.log(">>>>>>>: ", poems);
     const poemsToDsiplay = poems.map((poem, i) => (
       <div key={i} className="my-40 p-4 pb-6 rounded-lg bg-dark-3 text-white">
-        <Link href={`/profile/${poem.authorId.id}/${poem.folderId._id}/${poem._id}`}Id><h3 className="text-[22px] font-semibold">{poem.title}</h3></Link>
+        <Link href={`/profile/${poem.authorId.id}/${poem.folderId._id}/${poem._id}`}><h3 className="text-[22px] font-semibold">{poem.title}</h3></Link>
         <div className="mb-4 italic opacity-80 flex flex-col cursor-default">
         <h4 className="self-start" title="Poem type">{poem.type}</h4>
         <Link href={`/profile/${poem.authorId.id}`}><h4 className="self-start" title="Author">@{poem.authorId.username}</h4></Link>
