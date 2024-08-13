@@ -93,12 +93,20 @@ export async function fetchPoemComplex(userId: string | null, action: "count" | 
     if (userId) {
       ids = await getUsersIds(userId, "Clerk");
     }
+    const folders = await Folder.find({ shared: true }).select("_id");
+    const folderIds = folders.map(folder => folder._id);
     if (action === "count") {
-      const amount = await Poem.countDocuments({ authorId: { $ne: ids._id } });
+      const amount = await Poem.countDocuments({ authorId: { $ne: ids._id }, folderId: { $in: folderIds } });
       return amount;
     }
     if (action === "get") {
-      const poem = await Poem.find({ authorId: { $ne: ids._id } }).select("title type content").skip(skip!).limit(limit!);
+      const poem = await Poem.find({ authorId: { $ne: ids._id }, folderId: { $in: folderIds } })
+      .select("title type content")
+      .skip(skip!)
+      .limit(limit!)
+      .populate({path: "folderId", select: "title"})
+      .populate({path: "authorId", select: "id username"})
+      .lean();
       return JSON.parse(JSON.stringify(poem));
     }
   } catch (error: any) {
@@ -130,9 +138,9 @@ export async function handleLike(authUserId: string | undefined, poemId: string,
 
   connectToDB();
   if (!authUserId) return;
-  console.log("authUserId: ", authUserId);
-  console.log("poemId: ", poemId);
-  console.log("action: ", action);
+  // console.log("authUserId: ", authUserId);
+  // console.log("poemId: ", poemId);
+  // console.log("action: ", action);
   try {
     if (action === "check") {
       const contains = await check();
