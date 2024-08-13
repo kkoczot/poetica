@@ -5,6 +5,8 @@ import Author from "../models/user.model";
 import { connectToDB } from "../mongoose";
 import { createFolder } from "./folder.actions";
 import { PipelineStage } from "mongoose";
+import Folder from "../models/folder.model";
+import Poem from "../models/poem.model";
 
 interface Params {
   userId: string,
@@ -164,6 +166,78 @@ export async function searchSimple(text: string) {
     return plainAuthors || [];
   } catch (error) {
     throw new Error("Failed to search for authors in searchSimple()");
+  }
+}
+
+export async function suggestedAuthors( userId: string | undefined, condition: "fame" | "amount" | "similar" ) {
+  connectToDB();
+  try {
+    let ids = { _id: null };
+    if (userId) {
+      ids = await getUsersIds(userId, "Clerk");
+    }
+    if (condition === "amount") {
+      // authors -> folders
+      // folders -> poems
+      const folders = await Folder.find({ shared: true }).select("_id");
+      const folderIds = folders.map(folder => folder._id);
+      const poems = await Poem.find({ _id: { $nin: folderIds} }).select("authorId");
+      // console.log(poems);
+      const authorsAndAmount = {};
+      poems.forEach((poem: any) => {
+        if (!authorsAndAmount[String(poem.authorId)]) {
+          authorsAndAmount[String(poem.authorId)] = 1;
+        } else {
+          authorsAndAmount[String(poem.authorId)] = authorsAndAmount[String(poem.authorId)] + 1
+        }
+      });
+      const entries = Object.entries(authorsAndAmount);
+      entries.sort((a: any[], b: any[]) => b[1] - a[1]);
+      const sortedAuthors = Object.fromEntries(entries);
+      // console.log(sortedAuthors);
+      const idKeys = Object.keys(sortedAuthors);
+      console.log(idKeys);
+      const authorsDataRes = idKeys.map(async (idKey) => await Author.findOne({_id: idKey}, "username id"));
+      let authorData = await Promise.all(authorsDataRes);
+      authorData = authorData.map((aData) => ({...aData, poemsCount: sortedAuthors[String(aData._id)] }))
+      console.log(authorData);
+
+      // teraz wydobyć klucze, zmapować by mieć więcej danych a potem dołaczyć dane o ilości wierszy do pozyskanych danych, zreturnować i dalej wyświetlić
+      // UWAGA: zrobić tak by po zmapowaniu nie pojawiały się dodatkowe informacje, które wcześniej były niewidoczne (ew jeśli nie przeszkadzają to mogą zostać!); 
+      
+      return authorData;
+    }
+    if (condition === "fame") {
+      // top 30 the most famous authors
+      const authors = await Author.aggregate([
+        {
+          $match: {
+            id: { $ne: userId }
+          }
+        },
+        {
+          $project: {
+            id: 1,
+            username: 1,
+            // image: 1,
+            followersCount: { $size: "$followers" },
+          },
+        },
+        {
+          $sort: { followersCount: -1},
+        },
+        {
+          $limit: 30,
+        },
+      ]);
+      const plainAuthors = authors.map(author => JSON.parse(JSON.stringify(author)));
+      return plainAuthors;
+    }
+    if (condition === "similar") {
+      return "elo xD";
+    }
+  } catch (error: any) {
+    throw new Error("Encountered a new error in the function suggestedAuthors(): ", error.message);
   }
 }
 
