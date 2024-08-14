@@ -17,12 +17,18 @@ const Page = async () => {
 
   function showAuthors(condition: "amount" | "fame" | "similar") {
     if (condition === "amount") {
-      return ""
-      amountAuthors?.map((author: any, i: number) => console.log(author));
+      return amountAuthors?.map((author: any, i: number) => (
+        <div key={author.id} className="bg-dark-3 flex flex-col w-[280px] items-center px-2 py-4 rounded-lg">
+          <Link href={`/profile/${author.id}/`}><h3>@{author.username}</h3></Link>
+          <p>{i+1}.</p>
+          <div className="w-5/6 h-[2px] bg-green-600 my-1 rounded-lg" />
+          <p>Poems: {author.poemsCount}</p>
+        </div>
+      ));
     }
     if (condition === "fame") {
       return fameAuthors?.map((author: any, i: number) => (
-        <div className="bg-dark-3 flex flex-col w-[280px] items-center px-2 py-4 rounded-lg">
+        <div key={author.id} className="bg-dark-3 flex flex-col w-[280px] items-center px-2 py-4 rounded-lg">
           <Link href={`/profile/${author.id}/`}><h3>@{author.username}</h3></Link>
           <p>{i+1}.</p>
           <div className="w-5/6 h-[2px] bg-green-600 my-1 rounded-lg" />
@@ -32,6 +38,14 @@ const Page = async () => {
     }
     if (condition === "similar") {
       return ""
+      return fameAuthors?.map((author: any, i: number) => (
+        <div key={author.id} className="bg-dark-3 flex flex-col w-[280px] items-center px-2 py-4 rounded-lg">
+          <Link href={`/profile/${author.id}/`}><h3>@{author.username}</h3></Link>
+          <p>{i+1}.</p>
+          <div className="w-5/6 h-[2px] bg-green-600 my-1 rounded-lg" />
+          <p>Followers: {author.followersCount}</p>
+        </div>
+      ));
     }
   }
   
@@ -51,7 +65,7 @@ const Page = async () => {
       </div>
       <div className="mb-10">
         <h2>Authors of the largest number of poems</h2>
-        <div>
+        <div className="flex gap-4">
           {
             showAuthors("amount")
           }
@@ -59,7 +73,7 @@ const Page = async () => {
       </div>
       <div className="mb-10">
         <h2>Authors that you also should like</h2>
-        <div>
+        <div className="flex gap-4">
           {
             showAuthors("similar")
           }

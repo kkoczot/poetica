@@ -177,13 +177,18 @@ export async function suggestedAuthors( userId: string | undefined, condition: "
       ids = await getUsersIds(userId, "Clerk");
     }
     if (condition === "amount") {
-      // authors -> folders
-      // folders -> poems
+      // pobranie id folderów, które są udostępnione
       const folders = await Folder.find({ shared: true }).select("_id");
       const folderIds = folders.map(folder => folder._id);
-      const poems = await Poem.find({ _id: { $nin: folderIds} }).select("authorId");
-      // console.log(poems);
-      const authorsAndAmount = {};
+
+      // pobranie wszystkich wierszy
+      const poems = await Poem.find({ _id: { $nin: folderIds} }, "authorId");
+
+      // forEach z wierszy, który dodaje nowe authorId jako klucze do authorsAndAmount i jako wartość daje ile razy dane authorId się powtarza
+      interface AuthorsAndAmount {
+        [key: string]: number; // or any other type you expect for the values
+      };
+      const authorsAndAmount: AuthorsAndAmount = {};
       poems.forEach((poem: any) => {
         if (!authorsAndAmount[String(poem.authorId)]) {
           authorsAndAmount[String(poem.authorId)] = 1;
@@ -191,19 +196,27 @@ export async function suggestedAuthors( userId: string | undefined, condition: "
           authorsAndAmount[String(poem.authorId)] = authorsAndAmount[String(poem.authorId)] + 1
         }
       });
-      const entries = Object.entries(authorsAndAmount);
+
+      // sortowanie authorsAndAmount względem największej ilości powtórzonych authorId i ograniczenie wyniku do 30 największych
+      let entries = Object.entries(authorsAndAmount);
       entries.sort((a: any[], b: any[]) => b[1] - a[1]);
+      entries = entries.slice(0, 29);
       const sortedAuthors = Object.fromEntries(entries);
       // console.log(sortedAuthors);
+
+      // wyodrębnienie authorId (kluczy) czyli id autorów
       const idKeys = Object.keys(sortedAuthors);
-      console.log(idKeys);
+
+      // wyodrębnione do array id (klucze) są mapowane i zwracane są większe dane o najlepszych autorach 
       const authorsDataRes = idKeys.map(async (idKey) => await Author.findOne({_id: idKey}, "username id"));
       let authorData = await Promise.all(authorsDataRes);
-      authorData = authorData.map((aData) => ({...aData, poemsCount: sortedAuthors[String(aData._id)] }))
-      console.log(authorData);
 
-      // teraz wydobyć klucze, zmapować by mieć więcej danych a potem dołaczyć dane o ilości wierszy do pozyskanych danych, zreturnować i dalej wyświetlić
-      // UWAGA: zrobić tak by po zmapowaniu nie pojawiały się dodatkowe informacje, które wcześniej były niewidoczne (ew jeśli nie przeszkadzają to mogą zostać!); 
+      // do danych autorów dodawana jest informacja o ilości napisanych wierszy
+      authorData = authorData.map((aData) => {
+        const plainAData = aData.toObject();
+        plainAData["poemsCount"] = sortedAuthors[String(aData._id)];
+        return plainAData;
+      });
       
       return authorData;
     }
@@ -234,7 +247,22 @@ export async function suggestedAuthors( userId: string | undefined, condition: "
       return plainAuthors;
     }
     if (condition === "similar") {
-      return "elo xD";
+      console.log("SIMILAR szmato!")
+      if (!userId) return [];
+      const followedAuthors = await Author.findOne({id: userId}, {following: 1, _id: 0});
+      // if (!followedAuthors.following.length) return [];
+      console.log("followedAuthors: ", followedAuthors);
+      let authorsFollowedNext = followedAuthors.following.map( async (fAuthor: any) => await Author.findById(fAuthor, {following: 1, _id: 0}));
+      authorsFollowedNext = await Promise.all(authorsFollowedNext);
+
+      // 1) zalogować się jako slowacki      
+      // pobrać id follołowanych autorów przez zalogowanego usera
+      // zmapować id follołowanych autorów i pobrać array z id autorów, których oni follołują
+      // stworzyć z tych id seta (te id mają się nie powtarzać i mają być inne od id autorów follołowanych przez zalogowanego usera )
+      // zmapować tak otrzymane id aby mieć potrzebne info o podobnych autorach, których również warto follołować
+      
+      console.log("authorsFollowedNext: ", authorsFollowedNext);
+      return [];
     }
   } catch (error: any) {
     throw new Error("Encountered a new error in the function suggestedAuthors(): ", error.message);
