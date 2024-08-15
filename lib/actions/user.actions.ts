@@ -247,10 +247,9 @@ export async function suggestedAuthors( userId: string | undefined, condition: "
       return plainAuthors;
     }
     if (condition === "similar") {
-      console.log("SIMILAR szmato!")
       if (!userId) return [];
       const followedAuthors = await Author.findOne({id: userId}, {following: 1, _id: 0});
-      // if (!followedAuthors.following.length) return [];
+      if (!followedAuthors.following.length) return [];
       console.log("followedAuthors: ", followedAuthors);
       let authorsFollowedNext = followedAuthors.following.map( async (fAuthor: any) => await Author.findById(fAuthor, {following: 1, _id: 0}));
       authorsFollowedNext = await Promise.all(authorsFollowedNext);
@@ -261,8 +260,20 @@ export async function suggestedAuthors( userId: string | undefined, condition: "
       // stworzyć z tych id seta (te id mają się nie powtarzać i mają być inne od id autorów follołowanych przez zalogowanego usera )
       // zmapować tak otrzymane id aby mieć potrzebne info o podobnych autorach, których również warto follołować
       
-      console.log("authorsFollowedNext: ", authorsFollowedNext);
-      return [];
+      authorsFollowedNext = authorsFollowedNext.map((list: any) => list.following).flat();
+      authorsFollowedNext = new Set(authorsFollowedNext.map((aFN: any) => JSON.parse(JSON.stringify(aFN))));
+      if (authorsFollowedNext.has(userId.toString())) authorsFollowedNext.delete(userId.toString());
+      followedAuthors.following.map((fId: any) => {
+        if (authorsFollowedNext.has(fId.toString())) authorsFollowedNext.delete(fId.toString());
+      })
+      authorsFollowedNext = Array.from(authorsFollowedNext);
+      if (authorsFollowedNext.length) {
+        authorsFollowedNext = authorsFollowedNext.slice(0, 29);
+        const authorsData = authorsFollowedNext.map(async (aFN: any) => await Author.findOne({_id: aFN}, "username id"));
+        authorsFollowedNext = await Promise.all(authorsData);
+      }
+      console.log("authorsFollowedNext (final): ", authorsFollowedNext);
+      return authorsFollowedNext;
     }
   } catch (error: any) {
     throw new Error("Encountered a new error in the function suggestedAuthors(): ", error.message);

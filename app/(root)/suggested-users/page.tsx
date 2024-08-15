@@ -37,13 +37,20 @@ const Page = async () => {
       ));
     }
     if (condition === "similar") {
-      return ""
-      return fameAuthors?.map((author: any, i: number) => (
+      if (!similarAuthors.length) return (
+        <div className="bg-dark-3 flex flex-col w-[280px] items-center px-2 py-4 rounded-lg">
+          <h3>No similar authors for you!</h3>
+          <p>0</p>
+          <div className="w-5/6 h-[2px] bg-green-600 my-1 rounded-lg" />
+          <p>Follow other authors!</p>
+        </div>
+      )
+      return similarAuthors?.map((author: any, i: number) => (
         <div key={author.id} className="bg-dark-3 flex flex-col w-[280px] items-center px-2 py-4 rounded-lg">
           <Link href={`/profile/${author.id}/`}><h3>@{author.username}</h3></Link>
           <p>{i+1}.</p>
           <div className="w-5/6 h-[2px] bg-green-600 my-1 rounded-lg" />
-          <p>Followers: {author.followersCount}</p>
+          <p>Similar: {author.followersCount}</p>
         </div>
       ));
     }
