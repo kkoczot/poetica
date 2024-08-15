@@ -170,6 +170,9 @@ export async function searchSimple(text: string) {
 }
 
 export async function suggestedAuthors( userId: string | undefined, condition: "fame" | "amount" | "similar" ) {
+  function removeElements(firstArray: any[], secondArray: any[]) {
+    return firstArray.filter(id => !secondArray.includes(id));
+  };
   connectToDB();
   try {
     let ids = { _id: null };
@@ -249,8 +252,9 @@ export async function suggestedAuthors( userId: string | undefined, condition: "
     if (condition === "similar") {
       if (!userId) return [];
       const followedAuthors = await Author.findOne({id: userId}, {following: 1, _id: 0});
+
       if (!followedAuthors.following.length) return [];
-      console.log("followedAuthors: ", followedAuthors);
+      // console.log("followedAuthors: ", followedAuthors);
       let authorsFollowedNext = followedAuthors.following.map( async (fAuthor: any) => await Author.findById(fAuthor, {following: 1, _id: 0}));
       authorsFollowedNext = await Promise.all(authorsFollowedNext);
 
@@ -261,18 +265,37 @@ export async function suggestedAuthors( userId: string | undefined, condition: "
       // zmapować tak otrzymane id aby mieć potrzebne info o podobnych autorach, których również warto follołować
       
       authorsFollowedNext = authorsFollowedNext.map((list: any) => list.following).flat();
-      authorsFollowedNext = new Set(authorsFollowedNext.map((aFN: any) => JSON.parse(JSON.stringify(aFN))));
-      if (authorsFollowedNext.has(userId.toString())) authorsFollowedNext.delete(userId.toString());
-      followedAuthors.following.map((fId: any) => {
-        if (authorsFollowedNext.has(fId.toString())) authorsFollowedNext.delete(fId.toString());
-      })
-      authorsFollowedNext = Array.from(authorsFollowedNext);
-      if (authorsFollowedNext.length) {
-        authorsFollowedNext = authorsFollowedNext.slice(0, 29);
-        const authorsData = authorsFollowedNext.map(async (aFN: any) => await Author.findOne({_id: aFN}, "username id"));
-        authorsFollowedNext = await Promise.all(authorsData);
+
+      interface AuthorsAndAmount {
+        [key: string]: number; // or any other type you expect for the values
+      };
+      const authorsFollowedNextAmount: AuthorsAndAmount = {};
+      authorsFollowedNext.forEach((aFN: any) => {
+        if (!authorsFollowedNextAmount[String(aFN)]) {
+          authorsFollowedNextAmount[String(aFN)] = 1;
+        } else {
+          authorsFollowedNextAmount[String(aFN)] = authorsFollowedNextAmount[String(aFN)] + 1
+        }
+      });
+      // console.log(authorsFollowedNextAmount);
+
+      let toFollowKeys = Object.keys(authorsFollowedNextAmount);
+      if (toFollowKeys.includes(userId.toString())) {
+        toFollowKeys = removeElements(toFollowKeys, [userId.toString()]);
       }
-      console.log("authorsFollowedNext (final): ", authorsFollowedNext);
+      toFollowKeys = removeElements(toFollowKeys, followedAuthors.following.map((fId: any) => fId.toString()));
+
+      const authorsDataRes = toFollowKeys.map(async (idKey) => await Author.findOne({_id: idKey}, "username id"));
+      authorsFollowedNext = await Promise.all(authorsDataRes);
+
+      // console.log("authorsFollowedNext (before): ", authorsFollowedNext);
+      // console.log("authorsFollowedNextAmount (before): ", authorsFollowedNextAmount);
+      authorsFollowedNext = authorsFollowedNext.map((aData: any) => {
+        const plainAData = aData.toObject();
+        plainAData["poemsCount"] = authorsFollowedNextAmount[String(aData._id)];
+        return plainAData;
+      });
+      // console.log("authorsFollowedNext (final): ", authorsFollowedNext);
       return authorsFollowedNext;
     }
   } catch (error: any) {

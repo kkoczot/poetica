@@ -50,7 +50,7 @@ const Page = async () => {
           <Link href={`/profile/${author.id}/`}><h3>@{author.username}</h3></Link>
           <p>{i+1}.</p>
           <div className="w-5/6 h-[2px] bg-green-600 my-1 rounded-lg" />
-          <p>Similar: {author.followersCount}</p>
+          <p>Similar: {author.poemsCount}</p>
         </div>
       ));
     }
@@ -62,25 +62,25 @@ const Page = async () => {
   return (
     <section className="text-white text-[18px]">
       <h1 className="head-text mb-10">Authors suggested for you!</h1>
-      <div className="mb-10">
-        <h2>The most popular authors</h2>
-        <div className="flex gap-4">
+      <div className="mb-12">
+        <h2>The most popular authors:</h2>
+        <div className="flex gap-4 mt-2">
           {
             showAuthors("fame")
           }
         </div>
       </div>
-      <div className="mb-10">
-        <h2>Authors of the largest number of poems</h2>
-        <div className="flex gap-4">
+      <div className="mb-12">
+        <h2>Authors of the largest number of poems:</h2>
+        <div className="flex gap-4 mt-2">
           {
             showAuthors("amount")
           }
         </div>
       </div>
-      <div className="mb-10">
-        <h2>Authors that you also should like</h2>
-        <div className="flex gap-4">
+      <div className="mb-12">
+        <h2>Authors that you also should like:</h2>
+        <div className="flex gap-4 mt-2">
           {
             showAuthors("similar")
           }
