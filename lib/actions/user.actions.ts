@@ -184,8 +184,11 @@ export async function suggestedAuthors( userId: string | undefined, condition: "
       const folders = await Folder.find({ shared: true }).select("_id");
       const folderIds = folders.map(folder => folder._id);
 
+      const skipAuthors = await Author.find({followers: { $in: [ids?._id] }}, "_id");
+      console.log("skipAuthors: ", skipAuthors);
+
       // pobranie wszystkich wierszy
-      const poems = await Poem.find({ _id: { $nin: folderIds} }, "authorId");
+      const poems = await Poem.find({ _id: { $nin: folderIds}, authorId: { $nin: skipAuthors } }, "authorId");
 
       // forEach z wierszy, który dodaje nowe authorId jako klucze do authorsAndAmount i jako wartość daje ile razy dane authorId się powtarza
       interface AuthorsAndAmount {
@@ -211,7 +214,7 @@ export async function suggestedAuthors( userId: string | undefined, condition: "
       const idKeys = Object.keys(sortedAuthors);
 
       // wyodrębnione do array id (klucze) są mapowane i zwracane są większe dane o najlepszych autorach 
-      const authorsDataRes = idKeys.map(async (idKey) => await Author.findOne({_id: idKey}, "username id"));
+      const authorsDataRes = idKeys.map(async (idKey) => await Author.findOne({_id: idKey}, "username id image"));
       let authorData = await Promise.all(authorsDataRes);
 
       // do danych autorów dodawana jest informacja o ilości napisanych wierszy
@@ -221,21 +224,23 @@ export async function suggestedAuthors( userId: string | undefined, condition: "
         return plainAData;
       });
       
-      return authorData;
+      return authorData || [];
     }
     if (condition === "fame") {
       // top 30 the most famous authors
+      console.log(ids);
       const authors = await Author.aggregate([
         {
           $match: {
-            id: { $ne: userId }
+            id: { $ne: userId },
+            followers: { $nin: [ids?._id] }
           }
         },
         {
           $project: {
             id: 1,
             username: 1,
-            // image: 1,
+            image: 1,
             followersCount: { $size: "$followers" },
           },
         },
@@ -247,7 +252,7 @@ export async function suggestedAuthors( userId: string | undefined, condition: "
         },
       ]);
       const plainAuthors = authors.map(author => JSON.parse(JSON.stringify(author)));
-      return plainAuthors;
+      return plainAuthors || [];
     }
     if (condition === "similar") {
       if (!userId) return [];
@@ -285,16 +290,16 @@ export async function suggestedAuthors( userId: string | undefined, condition: "
       }
       toFollowKeys = removeElements(toFollowKeys, followedAuthors.following.map((fId: any) => fId.toString()));
 
-      const authorsDataRes = toFollowKeys.map(async (idKey) => await Author.findOne({_id: idKey}, "username id"));
+      const authorsDataRes = toFollowKeys.map(async (idKey) => await Author.findOne({_id: idKey}, "username id image"));
       authorsFollowedNext = await Promise.all(authorsDataRes);
 
       // console.log("authorsFollowedNext (before): ", authorsFollowedNext);
       // console.log("authorsFollowedNextAmount (before): ", authorsFollowedNextAmount);
       authorsFollowedNext = authorsFollowedNext.map((aData: any) => {
         const plainAData = aData.toObject();
-        plainAData["poemsCount"] = authorsFollowedNextAmount[String(aData._id)];
+        plainAData["similarAuthors"] = authorsFollowedNextAmount[String(aData._id)];
         return plainAData;
-      });
+      }).slice(0, 29);
       // console.log("authorsFollowedNext (final): ", authorsFollowedNext);
       return authorsFollowedNext;
     }
