@@ -189,6 +189,19 @@
   .custom-scrollbar::-webkit-scrollbar-thumb:hover {
     background: #7878a3;
   }
+
+  .h-scroll-style::-webkit-scrollbar {
+    background-color: rgb(20, 20, 30);
+    height: 3px;
+    border-radius: 10px;
+  }
+  .h-scroll-style::-webkit-scrollbar-thumb {
+    background-color: rgb(22, 163, 44);
+  }
+  .h-scroll-style::-webkit-scrollbar-thumb:hover {
+    background-color: rgb(50, 190, 70);
+    cursor: pointer;
+  }
 }
 
 /* Clerk Responsive fix */

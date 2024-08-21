@@ -20,7 +20,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       <Topbar />
       <main className="flex flex-row">
         <LeftSidebar />
-        <section className="main-container">
+        <section className="main-container overflow-x-hidden">
           <div className="w-full max-w-4xl">
             {/* <Suspense fallback={<p className="text-white text-9xl">Loading...</p>}>
               {children}
