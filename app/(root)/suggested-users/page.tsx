@@ -24,10 +24,10 @@ const Page = async () => {
     return author?.map((author: any, i: number) => (
       <div key={author.id} className="bg-dark-3 flex flex-col w-[280px] items-center px-2 py-4 rounded-lg">
         <Link href={`/profile/${author.id}/`}><h3>@{author.username}</h3></Link>
-        <div className="flex h-9 items-center">
+        <div className="flex my-1 items-center">
           <p>{i + 1}.</p>
           <div className="">
-            <Image className="" src={author.image} alt="user profile pic" height={36} width={36} />
+            <Image className="ml-2 rounded-full" src={author.image} alt="user profile pic" height={32} width={32} />
           </div>
         </div>
         <div className="w-5/6 h-[2px] bg-green-600 my-1 rounded-lg" />
