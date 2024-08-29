@@ -18,7 +18,7 @@ const Page = async () => {
       {
         notifs.map((notif, i) => (
           <>
-            <div key={i} className="text-white border-l-4 pt-2 pb-3 pl-3 my-5 border-green-600">
+            <div key={i} className="text-white border-l-4 pt-2 pb-3 pl-3 my-8 border-green-600">
               <h3 className="text-body-bold">{notif.title}</h3>
               <h4 className="text-[12px] text-gray-200">{notif.createdAt}</h4>
               <p className="mt-2">{notif.content}</p>
