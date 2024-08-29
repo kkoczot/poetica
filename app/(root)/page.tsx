@@ -12,20 +12,22 @@ import { useCallback, useEffect, useState } from "react";
 function Home() {
   const { userId } = useAuth();
   const [poems, setPoems] = useState<any[]>([]);
-  const [toDisplay, setToDisplay] = useState({gotData: false, amount: 0});
+  const [toDisplay, setToDisplay] = useState({ gotData: false, amount: 0 });
   const [showData, setShowData] = useState({ show: true, display: 0, toDisplay: 1 });
   const [loading, setLoading] = useState(false);
 
   function showPoems() {
     if (!poems.length) return <p className="text-white my-5">Please stand by...</p>
-    console.log(">>>>>>>: ", poems);
+    // console.log(">>>>>>>: ", poems);
     const poemsToDsiplay = poems.map((poem, i) => (
-      <div key={i} className="my-40 p-4 pb-6 rounded-lg bg-dark-3 text-white">
-        <Link href={`/profile/${poem.authorId.id}/${poem.folderId._id}/${poem._id}`}><h3 className="text-[22px] font-semibold">{poem.title}</h3></Link>
-        <div className="mb-4 italic opacity-80 flex flex-col cursor-default">
-        <h4 className="self-start" title="Poem type">{poem.type}</h4>
-        <Link href={`/profile/${poem.authorId.id}`}><h4 className="self-start" title="Author">@{poem.authorId.username}</h4></Link>
-        <Link href={`/profile/${poem.authorId.id}/${poem.folderId._id}`}><h4 className="self-start" title="Folder">{poem.folderId.title}</h4></Link>
+      <div key={i} className="my-14 p-4 pb-6 rounded-lg bg-dark-3 text-white">
+        <div className="flex flex-col items-start">
+          <Link href={`/profile/${poem.authorId.id}/${poem.folderId._id}/${poem._id}`}><h3 className="text-[22px] font-semibold">{poem.title}</h3></Link>
+          <div className="mb-4 italic opacity-80 flex flex-col cursor-default items-start">
+            <h4 className="self-start" title="Poem type">{poem.type}</h4>
+            <Link href={`/profile/${poem.authorId.id}`}><h4 className="self-start" title="Author">@{poem.authorId.username}</h4></Link>
+            <Link href={`/profile/${poem.authorId.id}/${poem.folderId._id}`}><h4 className="self-start" title="Folder">{poem.folderId.title}</h4></Link>
+          </div>
         </div>
         <p className="text-light-2 whitespace-break-spaces">{poem.content}</p>
       </div>
@@ -49,12 +51,12 @@ function Home() {
     async function getPoemsAmount() {
       try {
         const res = await fetchPoemComplex(userId || null, "count");
-        setToDisplay({gotData: true, amount: res});
+        setToDisplay({ gotData: true, amount: res });
       } catch (error) {
         throw new Error("Failed to get amount of poems from fetchPoemComplex");
       }
     }
-    
+
     if (action === "count") getPoemsAmount();
     if (action === "get") getPoems(display!);
   }, []);
@@ -91,7 +93,7 @@ function Home() {
   return (
     <main>
       <div>
-        <h1 className="head-text text-left mb-10">Poetica Home</h1>
+        <h1 className="head-text text-left mb-8">Poetica Home</h1>
       </div>
       <div>
         {
