@@ -15,7 +15,7 @@ export const sidebarLinks = [
     label: "Favourite",
   },
   {
-    imgURL: "/assets/create.svg",
+    imgURL: "/assets/add-users.svg",
     route: "/suggested-users",
     label: "Authors for u",
   },
