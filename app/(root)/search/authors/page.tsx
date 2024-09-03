@@ -44,7 +44,7 @@ const Page = () => {
 
   function handleShow() {
     const authors: any[] = [];
-    authors.push(<h3 className="text-white text-[20px] mt-6 mb-2">Authors:</h3>);
+    authors.push(<h3 key="handleshow-title-authors" className="text-white text-[20px] mt-6 mb-2">Authors:</h3>);
     if (data.length) {
       data.map((author: any) => authors.push(
         <SearchCard key={String(author.id)} type="author" textInfo={`@${author.username}`} url={`/profile/${author.id}`} linkInfo="profile" img={author.image} />

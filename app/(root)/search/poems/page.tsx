@@ -44,10 +44,10 @@ const Page = () => {
 
   function handleShow() {
     const poems: any[] = [];
-    poems.push(<h3 className="text-white text-[20px] mt-6 mb-2">Poems:</h3>);
+    poems.push(<h3 key="handleshow-title-poems" className="text-white text-[20px] mt-6 mb-2">Poems:</h3>);
     if (data.length) {
       data.map((poem: any) => poems.push(
-        <SearchCard key={String(poem._id)} type="poem" textInfo={poem.title} url={`/profile/${poem.authorDetails.id}/${poem.folderId}/${poem._id}`} linkInfo="poem" />
+        <SearchCard key={String(poem._id)} type="poem" textInfo={poem.title} url={`/profile/${poem.authorDetails.id}/${poem.folderId}/${poem._id}`} linkInfo="poem" poemType={poem.type} />
       ));
     } else {
       poems.push(<p className="text-red-500">Poems not found</p>);

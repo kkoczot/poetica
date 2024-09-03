@@ -32,12 +32,14 @@ export const sidebarLinks = [
 ];
 
 export const poemTypes = [
-  { poemType: "Ballad" },
-  { poemType: "Elegy" },
-  { poemType: "Free verse" },
-  { poemType: "Haiku" },
-  { poemType: "Limerick" },
-  { poemType: "List poem" },
-  { poemType: "Ode" },
-  { poemType: "Sonnet" }
+  { poemType: "Ballad", color: "#FF5733" },
+  { poemType: "Elegy", color: "#2E4053" },
+  { poemType: "Free verse", color: "#1ABC9C" },
+  { poemType: "Haiku", color: "#F39C12" },
+  { poemType: "Hymn", color: "#8E44AD" },
+  { poemType: "Limerick", color: "#27AE60" },
+  { poemType: "List poem", color: "#3498DB" },
+  { poemType: "Ode", color: "#E74C3C" },
+  { poemType: "Sonnet", color: "#34495E" },
+  { poemType: "Other", color: "#95A5A6" }
 ];

@@ -40,29 +40,29 @@ const Page = () => {
 
   function handleShow() {
     const all: any[] = [];
-    all.push(<h3 className="text-white text-[20px] mt-10 mb-2">Authors:</h3>);
+    all.push(<h3 key="handleshow-title-authors" className="text-white text-[20px] mt-10 mb-2">Authors:</h3>);
     if (data[0].length) {
       data[0].map((author: any) => all.push(
-        <SearchCard key={String(author.id)} type="author" textInfo={`@${author.username}`} url={`/profile/${author.id}`} linkInfo="profile" img={author.image} />
+        <SearchCard key={String(author._id)} type="author" textInfo={`@${author.username}`} url={`/profile/${author.id}`} linkInfo="profile" img={author.image} />
       ));
     } else {
-      all.push(<p className="text-red-500">Authors not found</p>);
+      all.push(<p key="handleshow-p-authors" className="text-red-500">Authors not found</p>);
     }
-    all.push(<h3 className="text-white text-[20px] mt-10 mb-2">Folders:</h3>);
+    all.push(<h3 key="handleshow-title-folders" className="text-white text-[20px] mt-10 mb-2">Folders:</h3>);
     if (data[1].length) {
       data[1].map((folder: any) => all.push(
         <SearchCard key={String(folder._id)} type="folder" textInfo={folder.title} url={`/profile/${folder.authorId.id}/${folder._id}`} linkInfo="folder" />
       ));
     } else {
-      all.push(<p className="text-red-500">Folders not found</p>);
+      all.push(<p key="handleshow-p-folders" className="text-red-500">Folders not found</p>);
     }
-    all.push(<h3 className="text-white text-[20px] mt-10 mb-2">Poems:</h3>);
+    all.push(<h3 key="handleshow-title-poems" className="text-white text-[20px] mt-10 mb-2">Poems:</h3>);
     if (data[2].length) {
       data[2].map((poem: any) => all.push(
-        <SearchCard key={String(poem._id)} type="poem" textInfo={poem.title} url={`/profile/${poem.authorId.id}/${poem.folderId}/${poem._id}`} linkInfo="poem" />
+        <SearchCard key={String(poem._id)} type="poem" textInfo={poem.title} url={`/profile/${poem.authorId.id}/${poem.folderId}/${poem._id}`} linkInfo="poem" poemType={poem.type} />
       ))
     } else {
-      all.push(<p className="text-red-500">Poems not found</p>);
+      all.push(<p key="handleshow-p-poems" className="text-red-500">Poems not found</p>);
     }
     return all;
   }
@@ -93,7 +93,7 @@ const Page = () => {
       </div>
       <div className="my-10">
         {
-          show ? countData() ? handleShow() : <p className="text-red-500">No results found!</p> : null
+          show ? countData() ? handleShow() : <p key="no-key" className="text-red-500">No results found!</p> : null
         }
       </div>
     </section>

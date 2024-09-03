@@ -200,7 +200,7 @@ function FavouritePoems(data: any) {
             <div key={d._id.toString()} className="text-white my-5">
               <div>
                 <Link href={`/profile/${d.authorId.id}`} className="inline-block">
-                  <Image src={d.authorId.image} alt={d.authorId.name} width={48} height={48} />
+                  <Image src={d.authorId.image} alt={d.authorId.name} width={48} height={48} className="rounded-full" />
                 </Link>
                 <Link href={`/profile/${d.authorId.id}`}><p>@{d.authorId.username}</p></Link>
                 <p className="my-2">Folder: <Link href={`/profile/${d.authorId.id}/${d.folderId._id}`}>{d.folderId.title}</Link></p>

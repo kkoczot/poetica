@@ -36,14 +36,13 @@ function FavouriteBtns() {
   }
 
   return (
-    <div className="max-2xl:grid max-sm:grid-cols-2 max-2xl:grid-cols-4 flex justify-between gap-4">
+    <div className="grid max-sm:grid-cols-2 grid-cols-4 gap-4">
       {
         poemTypes.map((pt, i) => (
           <button
             key={i}
-            className={`text-white border border-white rounded-lg px-5 py-2 hover:opacity-80
-              ${checkIfActive(replaceSpacesWithHyphens(pt.poemType)) ? "bg-white !text-black" : ""}
-              `}
+            className={`text-white border border-[${pt.color}] rounded-lg px-5 py-2 hover:opacity-80`}
+            style={checkIfActive(replaceSpacesWithHyphens(pt.poemType)) ? { color: "white", backgroundColor: pt.color } : undefined}
             onClick={() => handleButton(replaceSpacesWithHyphens(pt.poemType))}
           >
             {pt.poemType}

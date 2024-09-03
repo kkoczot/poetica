@@ -42,7 +42,7 @@ const Page = () => {
 
   function handleShow() {
     const folders: any[] = [];
-    folders.push(<h3 className="text-white text-[20px] mt-6 mb-2">Folders:</h3>);
+    folders.push(<h3 key="handleshow-title-folders" className="text-white text-[20px] mt-6 mb-2">Folders:</h3>);
     if (data.length) {
       data.map((folder: any) => folders.push(
         <SearchCard key={String(folder._id)} type="folder" textInfo={folder.title} url={`/profile/${folder.authorDetails.id}/${folder._id}`} linkInfo="folder" />
