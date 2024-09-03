@@ -1,7 +1,7 @@
 import CreatePoem from "@/components/forms/CreatePoem";
 import { fetchUser } from "@/lib/actions/user.actions";
 import { currentUser } from "@clerk/nextjs";
-import { notFound, redirect } from "next/navigation";
+import { redirect } from "next/navigation";
 
 async function Page() {
   const user = await currentUser();
@@ -10,7 +10,7 @@ async function Page() {
   const userInfo = await fetchUser(user.id)
   if (!userInfo?.onboarded) redirect("/onboarding");
 
-  notFound();
+  redirect("/");
   
   return (
     <>

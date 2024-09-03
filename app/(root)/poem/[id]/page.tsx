@@ -1,8 +1,8 @@
-import { notFound } from "next/navigation";
+import { redirect } from "next/navigation";
 
 // Patrzenie konkretnego wiersza i dodawanie komentarzy
 const Page = async () => {
-  notFound();
+  redirect("/");
   return (
     <section>
       <h1 className="head-text mb-10">Poem</h1>
