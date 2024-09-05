@@ -104,7 +104,16 @@ function CreatePoem({ folderId, userId }: Props) {
                 <SelectContent className="bg-dark-4">
                   {
                     poemTypes.map((pType: any) => (
-                      <SelectItem value={pType.poemType} key={pType.poemType} className="no-focus border border-dark-4 bg-dark-3 text-light-2 hover:cursor-pointer">{pType.poemType}</SelectItem>
+                      <SelectItem
+                        key={pType.poemType}
+                        value={pType.poemType}
+                        className="no-focus border border-dark-4 bg-dark-3 text-light-2 hover:cursor-pointer"
+                      >
+                        <span className="flex gap-2">
+                          <div className="h-3 w-3 rounded-full self-center mr-1" style={{ backgroundColor: pType.color }} />
+                          {pType.poemType}
+                        </span>
+                      </SelectItem>
                     ))
                   }
                 </SelectContent>
@@ -136,10 +145,10 @@ function CreatePoem({ folderId, userId }: Props) {
           )}
         />
         <div className="flex flex-col gap-8">
-          <Button type="submit" disabled={isLoading} className={`bg-primary-500 ${isLoading && "bg-green-500"}`}>
+          <Button type="submit" disabled={isLoading} className={`bg-green-700 hover:bg-green-700/50 ${isLoading && "bg-green-500"}`}>
             {isLoading ? "Creating Poem..." : "Create Poem"}
           </Button>
-          {pathname.includes("/profile/") && <Link href={pathname.slice(0, -11)} className="inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 text-primary-foreground hover:bg-primary/90 h-10 px-4 py-2 bg-primary-500">
+          {pathname.includes("/profile/") && <Link href={pathname.slice(0, -11)} className="inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 text-primary-foreground hover:bg-green-700/50 h-10 px-4 py-2 bg-green-700">
             Back to the folder
           </Link>}
         </div>
