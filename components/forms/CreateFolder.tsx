@@ -115,9 +115,12 @@ function CreateFolder({ userId }: Props) {
             </FormItem>
           )}
         />
-        <Button type="submit" disabled={isLoading} className={`bg-primary-500 ${isLoading && "bg-green-500"}`}>
-          {isLoading ? "Creating Folder..." : "Create Folder"}
-        </Button>
+        <div className="flex flex-col gap-8">
+          <Button type="submit" disabled={isLoading} className={`bg-green-700 hover:bg-green-700/50 ${isLoading && "bg-green-500"}`}>
+            {isLoading ? "Creating Folder..." : "Create Folder"}
+          </Button>
+          <Button type="button" disabled={isLoading} className="bg-green-700 hover:bg-green-700/50" onClick={() => router.back()}>Go back</Button>
+        </div>
       </form>
     </Form>
   )

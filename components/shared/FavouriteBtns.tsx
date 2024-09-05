@@ -41,7 +41,7 @@ function FavouriteBtns() {
         poemTypes.map((pt, i) => (
           <button
             key={i}
-            className={`text-white border border-[${pt.color}] rounded-lg px-5 py-2 hover:opacity-80`}
+            className={`text-white border rounded-lg px-5 py-2 hover:opacity-80`}
             style={checkIfActive(replaceSpacesWithHyphens(pt.poemType)) ? { color: "white", backgroundColor: pt.color } : undefined}
             onClick={() => handleButton(replaceSpacesWithHyphens(pt.poemType))}
           >
