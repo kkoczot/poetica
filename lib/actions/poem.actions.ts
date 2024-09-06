@@ -76,6 +76,16 @@ export async function editPoem({ poemId, title, content, type, folderDest, oldFo
   }
 }
 
+export async function checkIfRightFolder(poemId: string, folderId: string) {
+  connectToDB();
+  try {
+    const isFolderRight = await Folder.exists({ _id: folderId, poems: { $in: poemId } });
+    return Boolean(isFolderRight);
+  } catch (error) {
+    return false;
+  }
+}
+
 export async function fetchPoem(poemId: string) {
   connectToDB();
   try {

@@ -74,6 +74,26 @@ export async function deleteFolder(userId: string, folderId: string) {
   }
 }
 
+// export async function checkIfFolderExists(folderId: string) {
+//   connectToDB();
+//   try {
+//     const exists = await Author.findById(folderId);
+//     return true;
+//   } catch (error) {
+//     return false;
+//   }
+// }
+
+export async function checkIfRightUser(folderId: string, userId: string) {
+  connectToDB();
+  try {
+    const isAuthorRight = await Author.exists({ id: userId, folders: { $in: folderId } });
+    return Boolean(isAuthorRight);
+  } catch (error) {
+    return false;
+  }
+}
+
 export async function fetchFolder(folderId: string) {
   connectToDB();
   try {

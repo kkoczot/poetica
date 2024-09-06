@@ -1,8 +1,9 @@
 import { currentUser } from "@clerk/nextjs";
-import { redirect } from "next/navigation";
-import { fetchUser, checkUserFollow } from "@/lib/actions/user.actions";
+import { notFound, redirect } from "next/navigation";
+import { fetchUser, checkUserFollow, checkIfUserExists } from "@/lib/actions/user.actions";
 import ProfileHeader from "@/components/shared/ProfileHeader";
 import ProfileFolders from "@/components/shared/ProfileFolders";
+import NotFound from "@/components/shared/NotFound";
 
 const Page = async ({ params }: { params: { profileId: string } }) => {
   const user = await currentUser();
@@ -12,6 +13,8 @@ const Page = async ({ params }: { params: { profileId: string } }) => {
   }
 
   let follow = undefined;
+  const exists = await checkIfUserExists(params.profileId);
+  if (!exists) return <NotFound />;
 
   const { bio, name, username, image, id, followers, following } = await fetchUser(params.profileId);
 

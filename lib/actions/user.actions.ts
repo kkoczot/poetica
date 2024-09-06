@@ -58,6 +58,16 @@ export async function checkIfNewUser(userId: string) {
   }
 }
 
+export async function checkIfUserExists(userId: string) {
+  connectToDB();
+  try {
+    const exists = await Author.exists({ id: userId });
+    return exists;
+  } catch (error) {
+    return false;
+  }
+}
+
 export async function fetchUser(userId: string) {
   try {
     connectToDB();

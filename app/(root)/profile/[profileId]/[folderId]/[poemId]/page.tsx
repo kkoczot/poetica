@@ -1,6 +1,7 @@
 import PoemCardBtns from "@/components/interactiveElements/PoemCardBtns";
-import { fetchFolder } from "@/lib/actions/folder.actions";
-import { fetchPoem } from "@/lib/actions/poem.actions";
+import NotFound from "@/components/shared/NotFound";
+import { checkIfRightUser, fetchFolder } from "@/lib/actions/folder.actions";
+import { checkIfRightFolder, fetchPoem } from "@/lib/actions/poem.actions";
 import { fetchUser } from "@/lib/actions/user.actions";
 import { currentUser } from "@clerk/nextjs";
 import Link from "next/link";
@@ -15,6 +16,10 @@ const Page = async ({ params }: { params: { profileId: string, folderId: string,
     if (user.id === params.profileId) own = true;
   }
 
+  const rightUser = await checkIfRightUser(params.folderId, params.profileId);
+  const rightFolder = await checkIfRightFolder(params.poemId, params.folderId);
+  if (!rightFolder || !rightUser) return <NotFound />;
+  
   const poemData = await fetchPoem(params.poemId);
   const { username } = await fetchUser(params.profileId);
   const { title, shared, authorId } = await fetchFolder(params.folderId);

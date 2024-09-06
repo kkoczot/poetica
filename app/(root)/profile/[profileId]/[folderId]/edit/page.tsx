@@ -1,5 +1,6 @@
 import EditFolder from "@/components/forms/EditFolder";
-import { fetchFolder } from "@/lib/actions/folder.actions";
+import NotFound from "@/components/shared/NotFound";
+import { checkIfRightUser, fetchFolder } from "@/lib/actions/folder.actions";
 import { fetchUser } from "@/lib/actions/user.actions";
 import { currentUser } from "@clerk/nextjs";
 import { redirect } from "next/navigation";
@@ -10,6 +11,9 @@ const Page = async ({ params }: { params: { profileId: string, folderId: string 
 
   const { onboarded } = await fetchUser(userId);
   if (!onboarded) redirect("/onboarding");
+
+  const rightUser = await checkIfRightUser(params.folderId, params.profileId);
+  if (!rightUser) return <NotFound />;
 
   const fetchedFolder = await fetchFolder(params.folderId);
 

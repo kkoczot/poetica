@@ -1,11 +1,12 @@
 import { currentUser } from "@clerk/nextjs";
 import { redirect } from "next/navigation";
 import { fetchUser } from "@/lib/actions/user.actions";
-import { fetchFolder } from "@/lib/actions/folder.actions";
+import { checkIfRightUser, fetchFolder } from "@/lib/actions/folder.actions";
 import Image from "next/image";
 import DeleteFolderBtn from "@/components/interactiveElements/DeleteFolderBtn";
 import Link from "next/link";
 import PoemCard from "@/components/cards/PoemCard";
+import NotFound from "@/components/shared/NotFound";
 
 const Page = async ({ params }: { params: { profileId: string, folderId: string } }) => {
   const user = await currentUser();
@@ -13,6 +14,9 @@ const Page = async ({ params }: { params: { profileId: string, folderId: string 
     const authUser = await fetchUser(user?.id);
     if (!authUser?.onboarded) redirect("/onboarding");
   }
+  
+  const rightUser = await checkIfRightUser(params.folderId, params.profileId);
+  if (!rightUser) return <NotFound />;
   
   const fetchedFolder = await fetchFolder(params.folderId);
   
