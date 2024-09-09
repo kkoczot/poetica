@@ -17,7 +17,6 @@ function Bottombar() {
   useEffect(() => {
     async function getUnreadNotifs() {
       try {
-        console.log(" ----> Function fired!")
         const count = await countUnreadNotifs(userId || null);
         setUnreadCount(() => count);
       } catch (error: any) {
@@ -40,9 +39,8 @@ function Bottombar() {
         {sidebarLinks.map(l => {
           if (!userId && l.route === "/profile") return;
           const isAcive = (pathname.includes(l.route) && l.route.length > 1) || pathname === l.route;
-          if (l.route === "/profile") l.route = `${l.route}/${userId}`;
           return (
-            <Link key={l.label} href={l.route} className={`${isAcive && "bg-green-600"} bottombar_link relative`}>
+            <Link key={l.label} href={l.route === "/profile" ? `${l.route}/${userId}` : l.route} className={`${isAcive && "bg-green-600"} bottombar_link relative`}>
               {
                 (l.label === "Notifications" && unreadCount) ? (<p
                   className="absolute top-1 left-[calc(50%+4px)] flex justify-center items-center bg-green-700 w-[18px] rounded-full text-small-regular aspect-square text-white"

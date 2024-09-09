@@ -5,7 +5,6 @@ import Topbar from "@/components/shared/mainLayout/Topbar";
 import LeftSidebar from "@/components/shared/mainLayout/LeftSidebar";
 import RightSidebar from "@/components/shared/mainLayout/RightSidebar";
 import Bottombar from "@/components/shared/mainLayout/Bottombar";
-import { Suspense } from "react";
 
 const inter = Inter({ subsets: ["latin"] });
 
