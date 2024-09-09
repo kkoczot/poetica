@@ -5,6 +5,7 @@ import Topbar from "@/components/shared/mainLayout/Topbar";
 import LeftSidebar from "@/components/shared/mainLayout/LeftSidebar";
 import RightSidebar from "@/components/shared/mainLayout/RightSidebar";
 import Bottombar from "@/components/shared/mainLayout/Bottombar";
+import { Suspense } from "react";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -21,10 +22,10 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <LeftSidebar />
         <section className="main-container overflow-x-hidden">
           <div className="w-full max-w-4xl">
-            {/* <Suspense fallback={<p className="text-white text-9xl">Loading...</p>}>
+            <Suspense fallback={<p className="text-white text-3xl text-[24px] tracking-wider animate-pulse">Loading...</p>}>
               {children}
-            </Suspense> */}
-            {children}
+            </Suspense>
+            {/* {children} */}
           </div>
         </section>
         <RightSidebar />

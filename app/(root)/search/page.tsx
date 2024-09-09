@@ -14,6 +14,7 @@ const Page = () => {
   const [search, setSearch] = useState("");
   const [show, setShow] = useState(false);
   const [data, setData] = useState<any[]>([]);
+  const [loading, setLoading] = useState(false);
 
   async function getData() {
     const foundAuthors = await searchSimpleAuthors(search);
@@ -26,9 +27,11 @@ const Page = () => {
   }
 
   async function handleSearch() {
+    setLoading(true);
     const data = await getData();
     !show && setShow(prev => !prev);
     setData(data);
+    setLoading(false);
   }
 
   function countData() {
@@ -92,6 +95,9 @@ const Page = () => {
         <p className="text-gray-400 text-subtle-medium mt-1">*displays up to 5 results for every category</p>
       </div>
       <div className="my-10">
+        {
+          loading && <p className="text-white text-3xl text-[24px] tracking-wider animate-pulse">Loading data...</p>
+        }
         {
           show ? countData() ? handleShow() : <p key="no-key" className="text-red-500">No results found!</p> : null
         }

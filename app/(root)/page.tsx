@@ -18,7 +18,7 @@ function Home() {
   const [loading, setLoading] = useState(false);
 
   function showPoems() {
-    if (!poems.length) return <p className="text-white my-5">Please stand by...</p>
+    if (!poems.length) return <p className="text-white text-3xl text-[24px] tracking-wider animate-pulse my-5">Please stand by...</p>
     // console.log(">>>>>>>: ", poems);
     const poemsToDsiplay = poems.map((poem, i) => {
       const poemType = poemTypes.filter(type => type.poemType.toLowerCase() === poem.type.toLowerCase())[0];

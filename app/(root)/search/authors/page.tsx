@@ -20,12 +20,15 @@ const Page = () => {
   const [show, setShow] = useState(false);
   const [data, setData] = useState<any[]>([]);
   const [howManyResults, setHowManyResults] = useState<number>(0);
+  const [loading, setLoading] = useState(false);
 
   async function getData() {
+    setLoading(true);
     const results = await searchComplex({ ...search, page: pageNum, dpp: dpp }) || [];
     console.log(">>> results[0]: ", results[0]);
     console.log(">>> results[1]: ", results[1]);
     setHowManyResults(results.length ? results[1] : 0);
+    setLoading(false);
     return results[0];
   }
 
@@ -98,6 +101,9 @@ const Page = () => {
         </div>
       </div>
       <div className="my-10">
+        {
+          loading && <p className="text-white text-3xl text-[24px] tracking-wider animate-pulse">Loading data...</p>
+        }
         {
           show ? handleShow() : null
         }
