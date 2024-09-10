@@ -7,8 +7,10 @@ import Link from "next/link";
 import { useCallback, useEffect, useState } from "react";
 
 // TODO:
-// - zrobić wygląd końcowy (taki jaki powinien być)
-// - dodać działania typu linki
+// Napisać funkcję, która wyświetli odpowiednią ilość wierszy aby pojawił się scroll
+// Pseudokod: (wykorzystać: [zapewne] useEffect )
+// - wykonywać dopóki: po pobraniu i wyświetleniu danych wysokość strony jest mniejsza od wysokości ekranu
+// - zmienić toDisplay, showData, poems aby wywołać re-render
 
 function Home() {
   const { userId } = useAuth();
@@ -16,7 +18,7 @@ function Home() {
   const [toDisplay, setToDisplay] = useState({ gotData: false, amount: 0 });
   const [showData, setShowData] = useState({ show: true, display: 0, toDisplay: 1 });
   const [loading, setLoading] = useState(false);
-
+  
   function showPoems() {
     if (!poems.length) return <p className="text-white text-3xl text-[24px] tracking-wider animate-pulse my-5">Please stand by...</p>
     // console.log(">>>>>>>: ", poems);
@@ -43,11 +45,22 @@ function Home() {
   }
 
   const getPoemsDef = useCallback(async (action: "count" | "get", display?: number) => {
+    function removeDuplicates(arr: any[]) {
+      const uniqueIds = new Set();
+      return arr.filter((poem: any) => {
+        if (!uniqueIds.has(poem._id)) {
+          uniqueIds.add(poem._id);
+          return true;
+        }
+        return false;
+      })
+    }
+    
     async function getPoems(display: number) {
       setLoading(true);
       try {
         const res = await fetchPoemComplex(userId || null, "get", display, 1);
-        setPoems(prev => [...prev, ...res]);
+        setPoems(prev => removeDuplicates([...prev, ...res]));
       } catch (error: any) {
         throw new Error("Failed to get fetchPoemComplex");
       } finally {
