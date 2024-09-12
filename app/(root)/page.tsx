@@ -18,6 +18,7 @@ function Home() {
   const [toDisplay, setToDisplay] = useState({ gotData: false, amount: 0 });
   const [showData, setShowData] = useState({ show: true, display: 0, toDisplay: 1 });
   const [loading, setLoading] = useState(false);
+  console.log("Home RE-RENDERED!");
   
   function showPoems() {
     if (!poems.length) return <p className="text-white text-3xl text-[24px] tracking-wider animate-pulse my-5">Please stand by...</p>
@@ -41,10 +42,11 @@ function Home() {
         </div>
       )
     });
+    if (window.innerHeight === document.documentElement.scrollHeight) getPoemsDef("more");
     return poemsToDsiplay;
   }
 
-  const getPoemsDef = useCallback(async (action: "count" | "get", display?: number) => {
+  const getPoemsDef = useCallback(async (action: "count" | "get" | "more", display?: number) => {
     function removeDuplicates(arr: any[]) {
       const uniqueIds = new Set();
       return arr.filter((poem: any) => {
@@ -53,6 +55,20 @@ function Home() {
           return true;
         }
         return false;
+      })
+    }
+    
+    async function getMorePoems() {
+      function sleep(ms: number) {
+        return new Promise(resolve => setTimeout(resolve, ms));
+      }
+
+      sleep(2000).then(() => {
+        console.log("I'm in!");
+        if (window.innerHeight === document.documentElement.scrollHeight) {
+          console.log("I'm in a SLEEP func");
+          setShowData(prev => ({ ...prev, show: true }));
+        }
       })
     }
     
@@ -79,6 +95,7 @@ function Home() {
 
     if (action === "count") getPoemsAmount();
     if (action === "get") getPoems(display!);
+    if (action === "more") getMorePoems();
   }, []);
 
   useEffect(() => {
@@ -88,9 +105,12 @@ function Home() {
     if (showData.show) {
       if ((toDisplay.gotData && (toDisplay.amount >= showData.toDisplay)) || !toDisplay.gotData) {
         getPoemsDef("get", showData.display);
-        setShowData(prev => ({ show: false, display: prev.display + 1, toDisplay: prev.toDisplay + 1 }));
+        setShowData(prev => ({ ...prev, show: false, display: prev.display + 1, toDisplay: prev.toDisplay + 1 }));
       }
     }
+    // if (!showData.show){
+    //   if (document.documentElement.scrollHeight !== showData.sh) setShowData(prev => ({ ...prev, show: true }));
+    // }
   }, [showData.show]);
 
   useEffect(() => {
@@ -99,13 +119,13 @@ function Home() {
         window.innerHeight + document.documentElement.scrollTop !==
         document.documentElement.offsetHeight
       )
-        return;
+      return;
       if (
         window.innerHeight + document.documentElement.scrollTop ===
         document.documentElement.scrollHeight
       ) setShowData(prev => ({ ...prev, show: true }));
     };
-
+    
     window.addEventListener('scroll', handleScroll);
     return () => window.removeEventListener('scroll', handleScroll);
   }, [loading]);
