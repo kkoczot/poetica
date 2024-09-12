@@ -86,7 +86,16 @@ const Page = () => {
               <SelectItem value="any" className="no-focus border-dark-4 bg-dark-3 text-light-2 hover:cursor-pointer">Any</SelectItem>
               {
                 poemTypes.map((pType: any) => (
-                  <SelectItem value={pType.poemType} key={pType.poemType} className="no-focus border border-dark-4 bg-dark-3 text-light-2 hover:cursor-pointer">{pType.poemType}</SelectItem>
+                  <SelectItem
+                    key={pType.poemType}
+                    value={pType.poemType}
+                    className="no-focus border border-dark-4 bg-dark-3 text-light-2 hover:cursor-pointer"
+                  >
+                    <span className="flex gap-2">
+                      <div className="h-3 w-3 rounded-full self-center mr-1" style={{ backgroundColor: pType.color }} />
+                      {pType.poemType}
+                    </span>
+                  </SelectItem>
                 ))
               }
             </SelectContent>
