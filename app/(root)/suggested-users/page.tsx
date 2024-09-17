@@ -79,7 +79,7 @@ const Page = async () => {
             }
           </div>
         </div>
-        <div className="mb-12">
+        <div>
           <h2>Authors that you also should like:</h2>
           <p className="text-subtle-medium italic mb-2">(that you don't follow yet)</p>
           <div className="flex gap-4 mt-2 overflow-x-auto pb-2 h-scroll-style">

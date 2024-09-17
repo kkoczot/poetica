@@ -13,8 +13,8 @@ function Topbar() {
         <div className="block md:hidden">
           <SignedIn>
             <SignOutButton>
-              <div className="flex cursor-pointer">
-                <Image src="/assets/logout.svg" alt="" width={24} height={24} />
+              <div className="flex cursor-pointer" title="Log out">
+                <Image src="/assets/logout.svg" alt="log out" width={24} height={24} />
               </div>
             </SignOutButton>
           </SignedIn>
@@ -22,8 +22,8 @@ function Topbar() {
         <div>
           <SignedOut>
             <SignInButton>
-              <div className="flex cursor-pointer h-[24px] w-[24px">
-                <Image src="/assets/login.svg" alt="" width={24} height={24} />
+              <div className="flex cursor-pointer h-[24px] w-[24px" title="log in">
+                <Image src="/assets/login.svg" alt="Log in" width={24} height={24} />
               </div>
             </SignInButton>
           </SignedOut>
