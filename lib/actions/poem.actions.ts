@@ -115,7 +115,7 @@ export async function fetchPoemComplex(userId: string | null, action: "count" | 
       .skip(skip!)
       .limit(limit!)
       .populate({path: "folderId", select: "title"})
-      .populate({path: "authorId", select: "id username"})
+      .populate({path: "authorId", select: "id image username"})
       .lean();
       return JSON.parse(JSON.stringify(poem));
     }
