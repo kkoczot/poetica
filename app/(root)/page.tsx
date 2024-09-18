@@ -45,12 +45,9 @@ function Home() {
   const [poems, setPoems] = useState<any[]>([]);
   const [toDisplay, setToDisplay] = useState({ gotData: false, amount: 0 });
   const [showData, setShowData] = useState({ show: true, display: 0, toDisplay: 1 });
-  const [loading, setLoading] = useState(false);
-  console.log("Home RE-RENDERED!");
 
   function showPoems() {
     if (!poems.length) return <p className="text-white text-3xl text-[24px] tracking-wider animate-pulse my-5">Please stand by...</p>
-    // console.log(">>>>>>>: ", poems);
     const poemsToDsiplay = poems.map((poem: Poem) => {
       const poemType = poemTypes.filter(type => type.poemType.toLowerCase() === poem.type.toLowerCase())[0];
       return (
@@ -58,7 +55,7 @@ function Home() {
           <div className="flex flex-col items-start relative">
             <div title={'@' + poem.authorId.username} className="absolute top-2 right-2 h-11 w-11 rounded-full border-2 border-green-700 flex items-center overflow-hidden">
               <Link href={`/profile/${poem.authorId.id}`} >
-                <Image src={poem.authorId.image} alt={'@'+poem.authorId.username} width={64} height={64} className="opacity-50" />
+                <Image src={poem.authorId.image} alt={'@' + poem.authorId.username} width={64} height={64} className="opacity-50" />
               </Link>
             </div>
             <Link href={`/profile/${poem.authorId.id}/${poem.folderId._id}/${poem._id}`}><h3 className="text-[22px] font-semibold">{poem.title}</h3></Link>
@@ -96,24 +93,20 @@ function Home() {
         return new Promise(resolve => setTimeout(resolve, ms));
       }
 
-      sleep(2000).then(() => {
-        console.log("I'm in!");
+      sleep(2500).then(() => {
         if (window.innerHeight === document.documentElement.scrollHeight) {
-          console.log("I'm in a SLEEP func");
           setShowData(prev => ({ ...prev, show: true }));
         }
       })
     }
 
     async function getPoems(display: number) {
-      setLoading(true);
       try {
         const res = await fetchPoemComplex(userId || null, "get", display, 1);
         setPoems(prev => removeDuplicates([...prev, ...res]));
       } catch (error: any) {
         throw new Error("Failed to get fetchPoemComplex");
       } finally {
-        setLoading(false);
       }
     };
 
@@ -141,9 +134,6 @@ function Home() {
         setShowData(prev => ({ ...prev, show: false, display: prev.display + 1, toDisplay: prev.toDisplay + 1 }));
       }
     }
-    // if (!showData.show){
-    //   if (document.documentElement.scrollHeight !== showData.sh) setShowData(prev => ({ ...prev, show: true }));
-    // }
   }, [showData.show]);
 
   useEffect(() => {
@@ -161,7 +151,7 @@ function Home() {
 
     window.addEventListener('scroll', handleScroll);
     return () => window.removeEventListener('scroll', handleScroll);
-  }, [loading]);
+  }, []);
 
   return (
     <main>

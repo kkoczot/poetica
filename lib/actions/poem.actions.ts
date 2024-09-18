@@ -110,6 +110,8 @@ export async function fetchPoemComplex(userId: string | null, action: "count" | 
       return amount;
     }
     if (action === "get") {
+      if (skip == 0) limit = 2;
+
       const poem = await Poem.find({ authorId: { $ne: ids._id }, folderId: { $in: folderIds } })
       .select("title type content")
       .skip(skip!)
