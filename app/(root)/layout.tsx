@@ -25,7 +25,6 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
             <Suspense fallback={<p className="text-white text-3xl text-[24px] tracking-wider animate-pulse">Loading...</p>}>
               {children}
             </Suspense>
-            {/* {children} */}
           </div>
         </section>
         <RightSidebar />

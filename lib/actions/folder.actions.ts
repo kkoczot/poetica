@@ -23,7 +23,7 @@ export async function createFolder({ authorId, title, description, firstFolder, 
       title,
       description,
       shared,
-      deletable: !firstFolder, //firstFolder - true - false - not deletable | false - true - deletable
+      deletable: !firstFolder,
     })
 
     await Author.findByIdAndUpdate(authorId, {
@@ -74,16 +74,6 @@ export async function deleteFolder(userId: string, folderId: string) {
   }
 }
 
-// export async function checkIfFolderExists(folderId: string) {
-//   connectToDB();
-//   try {
-//     const exists = await Author.findById(folderId);
-//     return true;
-//   } catch (error) {
-//     return false;
-//   }
-// }
-
 export async function checkIfRightUser(folderId: string, userId: string) {
   connectToDB();
   try {
@@ -125,7 +115,7 @@ export async function searchSimple(text: string) {
   }
 }
 
-export async function searchComplex({text, sortOrder, page, dpp}: {text: string, sortOrder: string, page: number, dpp: number}): Promise<[any[], number]> { //dpp - display per page
+export async function searchComplex({text, sortOrder, page, dpp}: {text: string, sortOrder: string, page: number, dpp: number}): Promise<[any[], number]> {
   connectToDB();
   try {
     const amountToSkip = (page - 1) * dpp;

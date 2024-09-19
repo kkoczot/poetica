@@ -27,7 +27,7 @@ interface Poem {
   type: string;
   content: string;
   favourite: ObjectId[];
-  comments: any[]; // Update this if you have a defined structure for comments
+  comments: any[];
   __v: number;
 }
 
@@ -194,7 +194,6 @@ function FavouritePoems(data: any) {
       </div>
       <div className='mt-4 h-0.5 w-full bg-dark-3' />
       <div>
-        {/* whitespace-nowrap text-ellipsis overflow-hidden */}
         {handleTextShow("text")}
         {
           getProperPoems().map((d: Poem) => {

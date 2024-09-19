@@ -1,6 +1,5 @@
 import { redirect } from "next/navigation";
 
-// Patrzenie konkretnego wiersza i dodawanie komentarzy
 const Page = async () => {
   redirect("/");
   return (

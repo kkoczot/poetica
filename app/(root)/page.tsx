@@ -30,15 +30,9 @@ interface Poem {
   type: string;
   content: string;
   favourite: ObjectId[];
-  comments: any[]; // Update this if you have a defined structure for comments
+  comments: any[];
   __v: number;
 }
-
-// TODO:
-// Napisać funkcję, która wyświetli odpowiednią ilość wierszy aby pojawił się scroll
-// Pseudokod: (wykorzystać: [zapewne] useEffect )
-// - wykonywać dopóki: po pobraniu i wyświetleniu danych wysokość strony jest mniejsza od wysokości ekranu
-// - zmienić toDisplay, showData, poems aby wywołać re-render
 
 function Home() {
   const { userId } = useAuth();

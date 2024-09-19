@@ -8,9 +8,6 @@ import { useRouter, useSearchParams, usePathname } from "next/navigation";
 import SearchCard from "@/components/shared/SearchCard";
 import handlePagination from "@/components/PaginationFunctions";
 
-// Odpowiada za szukanie po: nazwie usera, nazwie wiersza, tagach || ogarnąć system stronicowania dla wyszukiwań
-// (Najpierw zrobić wyszukiwania / potem stronicowanie - patrzeć /favourite)
-
 const Page = () => {
   const dpp = 20;
   const router = useRouter();
@@ -25,8 +22,6 @@ const Page = () => {
   async function getData() {
     setLoading(true);
     const results = await searchComplex({ ...search, page: pageNum, dpp: dpp }) || [];
-    console.log(">>> results[0]: ", results[0]);
-    console.log(">>> results[1]: ", results[1]);
     setHowManyResults(results.length ? results[1] : 0);
     setLoading(false);
     return results[0];

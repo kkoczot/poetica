@@ -17,7 +17,6 @@ const Page = async ({ params }: { params: { profileId: string, folderId: string 
 
   const fetchedFolder = await fetchFolder(params.folderId);
 
-  console.log("fetchedFolder: ", fetchedFolder);
   if (userId !== params.profileId) redirect(`/profile/${params.profileId}`);
   if (!fetchedFolder.deletable) redirect(`/profile/${params.profileId}/${params.folderId}/`);
   

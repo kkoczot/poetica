@@ -23,7 +23,6 @@ const Page = async ({ params }: { params: { profileId: string, folderId: string,
 
   if (userId !== params.profileId) redirect(`/profile/${params.profileId}`);
   
-  // console.log("folders: ", folders);
   const poemData = {
     poemId: params.poemId,
     folderId: params.folderId,
