@@ -159,7 +159,7 @@ export async function searchSimple(text: string) {
   }
 }
 
-export async function suggestedAuthors( userId: string | undefined, condition: "fame" | "amount" | "similar" ) {
+export async function suggestedAuthors( userId: string | undefined, condition: "fame" | "amount" | "similar", limitSimilar?: number ) {
   function removeElements(firstArray: any[], secondArray: any[]) {
     return firstArray.filter(id => !secondArray.includes(id));
   };
@@ -268,7 +268,7 @@ export async function suggestedAuthors( userId: string | undefined, condition: "
         const plainAData = aData.toObject();
         plainAData["similarAuthors"] = authorsFollowedNextAmount[String(aData._id)];
         return plainAData;
-      }).slice(0, 29);
+      }).slice(0, limitSimilar || 29);
       return authorsFollowedNext;
     }
   } catch (error: any) {
