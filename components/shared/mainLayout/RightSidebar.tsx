@@ -8,7 +8,7 @@ import UserCarousel from "../UserCarousel";
 async function RightSidebar() {
   const user = await currentUser();
   if (!user) return null;
-  const similarAuthors = await suggestedAuthors(user.id, "similar") || [];
+  const similarAuthors = await suggestedAuthors(user.id, "similar", 5) || [];
   const followedAuthors = await fetchFollowedAuthors(user.id) || [];
   // console.log("user: ", user);
   return (

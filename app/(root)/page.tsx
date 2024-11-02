@@ -139,13 +139,13 @@ function Home() {
   useEffect(() => {
     const handleScroll = () => {
       if (
-        window.innerHeight + document.documentElement.scrollTop !==
-        document.documentElement.offsetHeight
+        window.innerHeight + document.documentElement.scrollTop <
+        document.documentElement.offsetHeight - 99
       )
         return;
       if (
-        window.innerHeight + document.documentElement.scrollTop ===
-        document.documentElement.scrollHeight
+        window.innerHeight + document.documentElement.scrollTop >=
+        document.documentElement.scrollHeight - 99
       ) setShowData(prev => ({ ...prev, show: true }));
     };
 

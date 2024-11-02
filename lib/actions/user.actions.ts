@@ -179,7 +179,7 @@ export async function searchSimple(text: string) {
   }
 }
 
-export async function suggestedAuthors( userId: string | undefined, condition: "fame" | "amount" | "similar" ) {
+export async function suggestedAuthors( userId: string | undefined, condition: "fame" | "amount" | "similar", limitSimilar?: number ) {
   function removeElements(firstArray: any[], secondArray: any[]) {
     return firstArray.filter(id => !secondArray.includes(id));
   };
@@ -198,7 +198,7 @@ export async function suggestedAuthors( userId: string | undefined, condition: "
       console.log("skipAuthors: ", skipAuthors);
 
       // pobranie wszystkich wierszy
-      const poems = await Poem.find({ _id: { $nin: folderIds}, authorId: { $nin: skipAuthors } }, "authorId");
+      const poems = await Poem.find({ _id: { $nin: folderIds}, authorId: { $nin: [...skipAuthors, ids?._id] } }, "authorId");
 
       // forEach z wierszy, który dodaje nowe authorId jako klucze do authorsAndAmount i jako wartość daje ile razy dane authorId się powtarza
       interface AuthorsAndAmount {
@@ -309,7 +309,7 @@ export async function suggestedAuthors( userId: string | undefined, condition: "
         const plainAData = aData.toObject();
         plainAData["similarAuthors"] = authorsFollowedNextAmount[String(aData._id)];
         return plainAData;
-      }).slice(0, 29);
+      }).slice(0, limitSimilar || 29);
       // console.log("authorsFollowedNext (final): ", authorsFollowedNext);
       return authorsFollowedNext;
     }
