@@ -40,5 +40,4 @@ tailwind.config.copy.ts
 
 # screenshots
 *.png
-*.jpg
 *.jpeg
