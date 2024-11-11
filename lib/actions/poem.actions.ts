@@ -204,7 +204,7 @@ export async function searchSimple(text: string) {
 
     const foundPoems = await Poem
       .find({ title: { $regex: text }, folderId: { $in: folderIds } })
-      .select("title type content authorId")
+      .select("title type content authorId folderId")
       .limit(5)
       .populate({ path: "authorId", select: "id" });
     const plainPoems = foundPoems.map(poem => JSON.parse(JSON.stringify(poem)));
