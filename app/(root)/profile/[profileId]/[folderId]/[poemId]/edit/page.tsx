@@ -30,6 +30,7 @@ const Page = async ({ params }: { params: { profileId: string, folderId: string,
     authorId: fetchedPoem.authorId,
     title: fetchedPoem.title,
     type: fetchedPoem.type,
+    tags: fetchedPoem?.tags || [],
     content: fetchedPoem.content,
   };
 

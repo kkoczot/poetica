@@ -13,10 +13,18 @@ interface Params {
   title: string,
   type: string,
   content: string,
+  tag1: string,
+  tag2: string,
+  tag3: string,
 }
 
-export async function createPoem({ folderId, authorId, title, type, content }: Params) {
+export async function createPoem({ folderId, authorId, title, type, content, tag1, tag2, tag3 }: Params) {
   connectToDB();
+
+  const tags = [tag1];
+  if(tag2) tags.push(tag2);
+  if(tag3) tags.push(tag3);
+
   try {
     const createdPoem = await Poem.create({
       authorId,
@@ -24,7 +32,8 @@ export async function createPoem({ folderId, authorId, title, type, content }: P
       title,
       type,
       content,
-    })
+      tags,
+    });
 
     await Folder.findByIdAndUpdate(folderId, {
       $push: { poems: createdPoem._id },
@@ -41,11 +50,18 @@ interface EditParams {
   content: string,
   type: string | undefined,
   folderDest: string | undefined,
-  oldFolder: string
+  oldFolder: string,
+  tag1: string,
+  tag2: string,
+  tag3: string,
 }
 
-export async function editPoem({ poemId, title, content, type, folderDest, oldFolder }: EditParams) {
+export async function editPoem({ poemId, title, content, type, folderDest, oldFolder, tag1, tag2, tag3 }: EditParams) {
   connectToDB();
+
+  const tags = [tag1];
+  if(tag2) tags.push(tag2);
+  if(tag3) tags.push(tag3);
 
   try {
     const fol = folderDest ? folderDest : oldFolder;
@@ -54,6 +70,7 @@ export async function editPoem({ poemId, title, content, type, folderDest, oldFo
       {
         $set: {
           title: title,
+          tags: tags,
           content: content,
           type: type,
           folderId: fol,
