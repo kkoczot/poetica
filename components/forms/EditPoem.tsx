@@ -39,7 +39,6 @@ interface Props {
   profileId: string;
   folders: any;
 }
-
 function EditPoem({ poem, profileId, folders }: Props) {
   const [isLoading, setIsLoading] = useState(false);
   const pathname = usePathname();
@@ -177,8 +176,11 @@ function EditPoem({ poem, profileId, folders }: Props) {
           )}
         />
         <div>
-          <p className="text-base-semibold text-light-2 mb-3">Tags</p>
-          <div className="flex gap-4">
+          <p className="text-base-semibold text-light-2 mb-2 md:mb-3">Tags</p>
+          <FormDescription className="mb-3 hidden max-md:block">
+          # sign will be added automatically
+          </FormDescription>
+          <div className="flex gap-4 max-md:flex-col">
             <FormField
               control={form.control}
               name="tag1"
@@ -194,13 +196,10 @@ function EditPoem({ poem, profileId, folders }: Props) {
                       {...field}
                     />
                   </FormControl>
-                  <FormDescription>
-                    # sign will be added automatically
-                  </FormDescription>
                   <FormMessage />
                 </FormItem>
               )}
-            />
+              />
             <FormField
               control={form.control}
               name="tag2"
@@ -215,12 +214,12 @@ function EditPoem({ poem, profileId, folders }: Props) {
                       type="text"
                       {...field}
                       disabled={!Boolean(form.watch().tag1.trim())}
-                    />
+                      />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
               )}
-            />
+              />
             <FormField
               control={form.control}
               name="tag3"
@@ -235,13 +234,16 @@ function EditPoem({ poem, profileId, folders }: Props) {
                       type="text"
                       {...field}
                       disabled={!Boolean(form.watch().tag1.trim()) || !Boolean(form.watch().tag2.trim())}
-                    />
+                      />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
               )}
-            />
+              />
           </div>
+          <FormDescription className="invisible md:visible">
+            # sign will be added automatically
+          </FormDescription>
         </div>
         <FormField
           control={form.control}

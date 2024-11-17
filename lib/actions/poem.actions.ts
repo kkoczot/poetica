@@ -22,8 +22,8 @@ export async function createPoem({ folderId, authorId, title, type, content, tag
   connectToDB();
 
   const tags = [tag1];
-  if(tag2) tags.push(tag2);
-  if(tag3) tags.push(tag3);
+  if (tag2) tags.push(tag2);
+  if (tag3) tags.push(tag3);
 
   try {
     const createdPoem = await Poem.create({
@@ -60,8 +60,8 @@ export async function editPoem({ poemId, title, content, type, folderDest, oldFo
   connectToDB();
 
   const tags = [tag1];
-  if(tag2) tags.push(tag2);
-  if(tag3) tags.push(tag3);
+  if (tag2) tags.push(tag2);
+  if (tag3) tags.push(tag3);
 
   try {
     const fol = folderDest ? folderDest : oldFolder;
@@ -130,12 +130,12 @@ export async function fetchPoemComplex(userId: string | null, action: "count" | 
       if (skip == 0) limit = 2;
 
       const poem = await Poem.find({ authorId: { $ne: ids._id }, folderId: { $in: folderIds } })
-      .select("title type content")
-      .skip(skip!)
-      .limit(limit!)
-      .populate({path: "folderId", select: "title"})
-      .populate({path: "authorId", select: "id image username"})
-      .lean().sort({"_id": "desc"});
+        .select("title type content")
+        .skip(skip!)
+        .limit(limit!)
+        .populate({ path: "folderId", select: "title" })
+        .populate({ path: "authorId", select: "id image username" })
+        .lean().sort({ "_id": "desc" });
       return JSON.parse(JSON.stringify(poem));
     }
   } catch (error: any) {
@@ -232,8 +232,8 @@ export async function searchSimple(text: string) {
 }
 
 export async function searchComplex(
-  { text, poemType, sortOrder, page, dpp }:
-    { text: string, poemType: string, sortOrder: string, page: number, dpp: number }
+  { text, poemType, userTags, sortOrder, page, dpp }:
+    { text: string, poemType: string, userTags: string, sortOrder: string, page: number, dpp: number }
 ): Promise<[any[], number]> {
   connectToDB();
 
@@ -248,6 +248,7 @@ export async function searchComplex(
     } else if (sortOrder === 'min') {
       sortOption = { favouritesCount: 1 };
     }
+    const tagsArray: string[] = userTags.trim().split(" ").filter((tag: string) => tag.length > 3 && tag[0] == '#').map((tag: string) => tag.slice(1, tag.length));
 
     const folders = await Folder.find({ shared: true }).select("_id");
     const folderIds = folders.map(folder => folder._id);
@@ -258,6 +259,7 @@ export async function searchComplex(
           title: 1,
           content: 1,
           authorId: 1,
+          tags: 1,
           type: 1,
           folderId: 1,
           favouritesCount: { $size: '$favourite' },
@@ -279,6 +281,7 @@ export async function searchComplex(
           title: 1,
           content: 1,
           authorId: 1,
+          tags: 1,
           type: 1,
           folderId: 1,
           favouritesCount: 1,
@@ -287,11 +290,18 @@ export async function searchComplex(
       },
       {
         $match: {
-          title: { $regex: text, $options: 'i' },
           folderId: { $in: folderIds },
         },
       },
     ];
+
+    if (text) {
+      pipeline.push({
+        $match: {
+          title: { $regex: text, $options: 'i' },
+        },
+      })
+    }
 
     if (poemType !== "any") {
       pipeline.push({
@@ -299,6 +309,14 @@ export async function searchComplex(
           type: poemType,
         },
       });
+    }
+
+    if (tagsArray.length) {
+      pipeline.push({
+        $match: {
+          tags: { $in: tagsArray },
+        },
+      })
     }
 
     if (sortOption) {
