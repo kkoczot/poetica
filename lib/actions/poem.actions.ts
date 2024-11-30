@@ -208,7 +208,7 @@ export async function totalFetchLikedPoems(authorId: string, poemIds: string[]) 
         return null;
     }));
     const data = results.filter((poem: any[]) => poem !== null);
-    console.log("data: ", data);
+    // console.log("data: ", data);
     console.log(`
       -----------------------------------------------
       > Funkcja pobrania danych została wykonana!
@@ -220,32 +220,33 @@ export async function totalFetchLikedPoems(authorId: string, poemIds: string[]) 
   }
 }
 
-// export async function everyTypeLikedCountPoems(poemIds: string[]) {
-//   connectToDB();
-//   try {
-//     let results = await Promise.all(
-//       poemIds.map(async (poemId) => {
-//         const poem = await Poem.findById(poemId)
-//           .select("title type")
-//           .populate({ path: "folderId", select: "shared" });
+export async function everyTypeLikedCountPoems(authorId: string, poemIds: string[]) {
+  connectToDB();
+  try {
+    let results = await Promise.all(
+      poemIds.map(async (poemId) => {
+        const poem = await Poem.findById(poemId)
+          .select("title type")
+          .populate({ path: "authorId", select: "id"})
+          .populate({ path: "folderId", select: "shared" });
         
-//         if(poem?.folderId?.shared) return poem;
-//         return null;
-//     }));
+        if(poem?.folderId?.shared || poem?.authorId?.id) return poem;
+        return null;
+    }));
 
-//     const data = results.filter((poem: {_id: string, folderId: { _id: string, shared: boolean}, title: string, type: string}) => poem !== null);
-//     const count: { [type: string]: number } = {};
-//     data.map((poem: {_id: string, folderId: { _id: string, shared: boolean}, title: string, type: string}) => {
-//       if(!count[poem?.type]) count[poem.type] = 1;
-//       else count[poem.type] += 1;
-//     })
-//     console.log("Data: ", data);
-//     console.log("Count: ", count);
-//     return count;
-//   } catch (error) {
-//     return {};
-//   }
-// }
+    const data = results.filter((poem: {_id: string, folderId: { _id: string, shared: boolean}, title: string, type: string}) => poem !== null);
+    const count: { [type: string]: number } = {};
+    data.map((poem: {_id: string, folderId: { _id: string, shared: boolean}, title: string, type: string}) => {
+      if(!count[poem?.type]) count[poem.type] = 1;
+      else count[poem.type] += 1;
+    })
+    // console.log("Data: ", data);
+    // console.log("Count: ", count);
+    return count;
+  } catch (error) {
+    return {};
+  }
+}
 
 export async function searchSimple(text: string) {
   connectToDB();

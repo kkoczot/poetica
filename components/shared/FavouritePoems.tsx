@@ -45,21 +45,21 @@ function FavouritePoems(data: any) {
 
   function handleTextShow(action: "text" | "amount") {
     if (action === "text") {
-      if (poemData.filter((d: Poem) => d.folderId.shared).length < 1) {
+      if (poemData.length < 1) {
         return <p className="text-red-500 mt-5">You do not like any poems yet!</p>
       }
-      else if (spQ !== "" && poemData.filter((d: Poem) => d.folderId.shared && spQ?.includes(replaceSpacesWithHyphens(d.type))).length < 1) {
+      else if (spQ !== "" && poemData.filter((d: Poem) => spQ?.includes(replaceSpacesWithHyphens(d.type))).length < 1) {
         return <p className="text-red-500 mt-5">You do not like any poems that are the type you have choosen!</p>
       }
     } else if (action === "amount") {
-      if (spQ !== "") return <p className="text-white inline-block ml-2">(found {poemData.filter((d: Poem) => d.folderId.shared && spQ?.includes(replaceSpacesWithHyphens(d.type))).length} poems)</p>
+      if (spQ !== "") return <p className="text-white inline-block ml-2">(found {poemData.filter((d: Poem) => spQ?.includes(replaceSpacesWithHyphens(d.type))).length} poems)</p>
     }
   }
 
   function getProperPoems() {
     let page = Number(sp.get("page")) || 1;
 
-    const adequatePoems = poemData.filter((d: Poem) => d.folderId.shared && (spQ === "" || spQ?.includes(replaceSpacesWithHyphens(d.type))));
+    const adequatePoems = poemData.filter((d: Poem) => (spQ === "" || spQ?.includes(replaceSpacesWithHyphens(d.type))));
 
     const countPoems = adequatePoems.length;
 
@@ -83,7 +83,7 @@ function FavouritePoems(data: any) {
 
   function handlePagination() {
     let page = Number(sp.get("page")) || 1;
-    const countPoems = poemData.filter((d: Poem) => d.folderId.shared && (spQ === "" || spQ?.includes(replaceSpacesWithHyphens(d.type)))).length;
+    const countPoems = poemData.filter((d: Poem) => (spQ === "" || spQ?.includes(replaceSpacesWithHyphens(d.type)))).length;
     const pages = Math.ceil(countPoems / showPerPage);
     if (!pages || page > pages) return false;
     if (pages < 11) {
