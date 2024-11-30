@@ -122,17 +122,6 @@ export async function checkWhatTypeOfFolder(folderId: string) {
   
   connectToDB();
   try {
-    /*
-    STH:  {
-      _id: new ObjectId('661af2fffbed546a44689bff'),
-      poems: [
-        { _id: new ObjectId('662822bb81e45c9edcd9d560'), type: 'Limerick' },
-        { _id: new ObjectId('6628211c81e45c9edcd9d548'), type: 'Limerick' },
-        { _id: new ObjectId('66676a3ce52134571eef972d'), type: 'Limerick' }
-      ]
-    }
-    */
-
     const typeAmount: { [type: string]: number } = {};
     const folderPoemInfo = await Folder.findById(folderId).select("poems").populate({path: "poems", model: "Poem", select: "type"}).exec();
 

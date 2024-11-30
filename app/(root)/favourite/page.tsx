@@ -26,14 +26,14 @@ const Page = async () => {
 
   // console.log("authUser.likes: ", authUser.likes);
 
-  const likedPoemsData = await totalFetchLikedPoems(authUser.likes); // authUser.likes
+  const likedPoemsData = await totalFetchLikedPoems(user.id, authUser.likes); // authUser.likes
   const data = likedPoemsData.length > 0 && likedPoemsData.map(d => JSON.stringify(d));
   // console.log(" >>> data: ", likedPoemsData);
   return (
     <section>
       <div>
         <h1 className="head-text">Favourite poems</h1>
-        <h2 className="text-light-2 mb-10">You like {authUser.likes.length} poem(s)</h2>
+        <h2 className="text-light-2 mb-10">You like {authUser.likes.length} poem(s) | {likedPoemsData.length} of them are shared</h2>
         <FavouriteBtns />
       </div>
       <div>

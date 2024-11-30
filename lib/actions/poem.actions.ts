@@ -194,14 +194,21 @@ export async function handleLike(authUserId: string | undefined, poemId: string,
   }
 }
 
-export async function totalFetchLikedPoems(poemIds: string[]) { //użyć populate i chat GPT
+export async function totalFetchLikedPoems(authorId: string, poemIds: string[]) { //użyć populate i chat GPT
   mongoose.set('strictPopulate', false);
   connectToDB();
   try {
-    let results = poemIds.map(async (poemId) => {
-      return await Poem.findById(poemId).populate({ path: "authorId", select: "username name image id" }).populate({ path: "folderId", select: "title shared" });
-    });
-    const data = await Promise.all(results);
+    let results = await Promise.all(
+      poemIds.map(async (poemId) => {
+        const poem = await Poem.findById(poemId)
+          .populate({ path: "authorId", select: "username name image id" })
+          .populate({ path: "folderId", select: "title shared" });
+        
+        if(poem?.folderId?.shared || poem?.authorId?.id === authorId) return poem;
+        return null;
+    }));
+    const data = results.filter((poem: any[]) => poem !== null);
+    console.log("data: ", data);
     console.log(`
       -----------------------------------------------
       > Funkcja pobrania danych została wykonana!
@@ -212,6 +219,33 @@ export async function totalFetchLikedPoems(poemIds: string[]) { //użyć populat
     return [];
   }
 }
+
+// export async function everyTypeLikedCountPoems(poemIds: string[]) {
+//   connectToDB();
+//   try {
+//     let results = await Promise.all(
+//       poemIds.map(async (poemId) => {
+//         const poem = await Poem.findById(poemId)
+//           .select("title type")
+//           .populate({ path: "folderId", select: "shared" });
+        
+//         if(poem?.folderId?.shared) return poem;
+//         return null;
+//     }));
+
+//     const data = results.filter((poem: {_id: string, folderId: { _id: string, shared: boolean}, title: string, type: string}) => poem !== null);
+//     const count: { [type: string]: number } = {};
+//     data.map((poem: {_id: string, folderId: { _id: string, shared: boolean}, title: string, type: string}) => {
+//       if(!count[poem?.type]) count[poem.type] = 1;
+//       else count[poem.type] += 1;
+//     })
+//     console.log("Data: ", data);
+//     console.log("Count: ", count);
+//     return count;
+//   } catch (error) {
+//     return {};
+//   }
+// }
 
 export async function searchSimple(text: string) {
   connectToDB();
