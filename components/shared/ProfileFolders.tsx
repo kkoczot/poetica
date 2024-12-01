@@ -24,11 +24,11 @@ async function ProfileFolders({ accountId, authUserId }: Props) {
               <div key={folder._id} className="flex justify-center w-full items-center py-2 px-2">
                 <Link href={`/profile/${accountId}/${folder._id}`} className="p-2 flex flex-col justify-center items-center hover:opacity-80 relative">
                   <div
-                    className={`absolute top-1 right-[calc(50%_-_35px)] h-3 w-3 z-[999] rounded-full ${folder.deletable ? folder.shared ? "bg-green-500" : "bg-red-600" : "hidden"}`}
+                    className={`absolute top-1 left-[calc(50%_-_35px)] h-3 w-3 z-[999] rounded-full ${folder.deletable ? folder.shared ? "bg-green-500" : "bg-red-600" : "hidden"}`}
                     title={`${folder.deletable ? folder.shared ? "Shared" : "Not shared" : null}`}
                   />
                   <div
-                    className={`absolute flex justify-center items-center top-1 left-[calc(50%_-_50px)] h-5 w-5 z-[999] rounded-full font-bold text-[1.25rem]  bg-white`}
+                    className={`absolute flex justify-center items-center top-0 right-[calc(50%_-_52px)] h-5 px-1 z-[999] rounded-sm font-bold bg-white`}
                     title={`Contains ${folder.poems.length} poems`}
                   >
                     {folder.poems.length}

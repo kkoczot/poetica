@@ -2,7 +2,7 @@
 import { useRouter, useSearchParams } from "next/navigation";
 import { poemTypes } from "@/constants";
 
-function FavouriteBtns({amount}: {amount: {[type: string]: number}}) {
+function FavouriteBtns({ amount }: { amount: { [type: string]: number } }) {
   const router = useRouter();
   const sp = useSearchParams();
   const spQ = sp.get('q') || "";
@@ -41,12 +41,14 @@ function FavouriteBtns({amount}: {amount: {[type: string]: number}}) {
         poemTypes.map((pt, i) => (
           <button
             key={i}
-            className={`relative overflow-hidden text-white border rounded-lg px-5 py-2 hover:opacity-80`}
+            className={`overflow-hidden text-white border rounded-lg hover:opacity-80`}
             style={checkIfActive(replaceSpacesWithHyphens(pt.poemType)) ? { color: "white", backgroundColor: pt.color } : undefined}
             onClick={() => handleButton(replaceSpacesWithHyphens(pt.poemType))}
           >
-            {pt.poemType}
-            <span className="absolute top-0 bottom-0 flex flex-col items-center justify-center right-0 px-1 bg-white text-black text-body-bold">
+            <span className="mx-5 my-2 block">
+              {pt.poemType}
+            </span>
+            <span className="flex flex-col items-center justify-center bg-white text-black font-bold">
               {amount[pt.poemType] || 0}
             </span>
           </button>

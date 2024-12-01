@@ -230,7 +230,7 @@ export async function everyTypeLikedCountPoems(authorId: string, poemIds: string
           .populate({ path: "authorId", select: "id"})
           .populate({ path: "folderId", select: "shared" });
         
-        if(poem?.folderId?.shared || poem?.authorId?.id) return poem;
+        if(poem?.folderId?.shared || poem?.authorId?.id == authorId) return poem;
         return null;
     }));
 
