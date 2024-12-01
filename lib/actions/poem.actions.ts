@@ -203,10 +203,10 @@ export async function totalFetchLikedPoems(authorId: string, poemIds: string[]) 
         const poem = await Poem.findById(poemId)
           .populate({ path: "authorId", select: "username name image id" })
           .populate({ path: "folderId", select: "title shared" });
-        
-        if(poem?.folderId?.shared || poem?.authorId?.id === authorId) return poem;
+
+        if (poem?.folderId?.shared || poem?.authorId?.id === authorId) return poem;
         return null;
-    }));
+      }));
     const data = results.filter((poem: any[]) => poem !== null);
     // console.log("data: ", data);
     console.log(`
@@ -227,17 +227,17 @@ export async function everyTypeLikedCountPoems(authorId: string, poemIds: string
       poemIds.map(async (poemId) => {
         const poem = await Poem.findById(poemId)
           .select("title type")
-          .populate({ path: "authorId", select: "id"})
+          .populate({ path: "authorId", select: "id" })
           .populate({ path: "folderId", select: "shared" });
-        
-        if(poem?.folderId?.shared || poem?.authorId?.id == authorId) return poem;
-        return null;
-    }));
 
-    const data = results.filter((poem: {_id: string, folderId: { _id: string, shared: boolean}, title: string, type: string}) => poem !== null);
+        if (poem?.folderId?.shared || poem?.authorId?.id == authorId) return poem;
+        return null;
+      }));
+
+    const data = results.filter((poem: { _id: string, folderId: { _id: string, shared: boolean }, title: string, type: string }) => poem !== null);
     const count: { [type: string]: number } = {};
-    data.map((poem: {_id: string, folderId: { _id: string, shared: boolean}, title: string, type: string}) => {
-      if(!count[poem?.type]) count[poem.type] = 1;
+    data.map((poem: { _id: string, folderId: { _id: string, shared: boolean }, title: string, type: string }) => {
+      if (!count[poem?.type]) count[poem.type] = 1;
       else count[poem.type] += 1;
     })
     // console.log("Data: ", data);
@@ -245,6 +245,48 @@ export async function everyTypeLikedCountPoems(authorId: string, poemIds: string
     return count;
   } catch (error) {
     return {};
+  }
+}
+
+export async function getTopThreePoemsType(authorId: string) {
+  function getTopThree(count: Record<string, number>): {[type: string]: number} {
+    const entries = Object.entries(count);
+  
+    const sortedEntries = entries.sort((a, b) => b[1] - a[1]);
+  
+    const sortedEntriesMax = sortedEntries.slice(0, 3).map(([key]) => key);
+
+    const limitedCount: { [type: string]: number} = {};
+
+    sortedEntriesMax.map(entry => limitedCount[entry] = count[entry])
+
+    return limitedCount;
+  }
+  
+  connectToDB();
+  try {
+    const userData = await Author.findOne({ id: authorId }).select("folders")
+      .populate({
+        path: "folders",
+        populate: {
+          path: "poems",
+          model: "Poem",
+          select: "type",
+        },
+        select: "title",
+      })
+      .select("username folders");
+
+    const poemsData = userData.folders.map((folder: any) => folder.poems).flat();
+    const count: { [type: string]: number } = {};
+    poemsData.map((poem: { _id: string, type: string }) => {
+      if (!count[poem?.type]) count[poem.type] = 1;
+      else count[poem.type] += 1;
+    });
+
+    return getTopThree(count);
+  } catch (error) {
+    return {}
   }
 }
 

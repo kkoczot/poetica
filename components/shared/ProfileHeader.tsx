@@ -9,12 +9,13 @@ interface Props {
   username: string;
   image: string;
   bio: string;
+  topThree: {[type: string]: number};
   follow?: string | undefined;
   followers: number;
   following: number;
 }
 
-async function ProfileHeader({ accountId, authUserId, name, username, image, bio, follow, followers, following }: Props) {
+async function ProfileHeader({ accountId, authUserId, name, username, image, bio, follow, topThree, followers, following }: Props) {
   return (
     <section>
       <div className='flex w-full flex-col justify-start'>
@@ -71,6 +72,9 @@ async function ProfileHeader({ accountId, authUserId, name, username, image, bio
         </div>
         <div className="mt-4">
           <span className="text-white">Followers: {followers} | Following: {following}</span>
+          <div className="mt-3">
+            {Object.keys(topThree).map((key: string, i: number) => <p key={key} className="text-white">{i+1}. {key}: {topThree[key]}</p>)}
+          </div>
         </div>
         <p className='mt-6 max-w-lg text-base-regular text-light-2'>{bio}</p>
 

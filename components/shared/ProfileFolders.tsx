@@ -19,7 +19,7 @@ async function ProfileFolders({ accountId, authUserId }: Props) {
           folders.map((folder, i) => {
             if ((accountId != authUserId) && !folder.shared) return;
             const thisPoemType = poemTypes.filter((poemType: { poemType: string, color: string }) => poemType.poemType == arrayOfTags[i][0])[0] || {};
-            console.log("thisPoemType: ", thisPoemType);
+            // console.log("thisPoemType: ", thisPoemType);
             return (
               <div key={folder._id} className="flex justify-center w-full items-center py-2 px-2">
                 <Link href={`/profile/${accountId}/${folder._id}`} className="p-2 flex flex-col justify-center items-center hover:opacity-80 relative">
