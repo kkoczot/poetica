@@ -195,7 +195,7 @@ export async function suggestedAuthors( userId: string | undefined, condition: "
       const folderIds = folders.map(folder => folder._id);
 
       const skipAuthors = await Author.find({followers: { $in: [ids?._id] }}, "_id");
-      console.log("skipAuthors: ", skipAuthors);
+      // console.log("skipAuthors: ", skipAuthors);
 
       // pobranie wszystkich wierszy
       const poems = await Poem.find({ _id: { $nin: folderIds}, authorId: { $nin: [...skipAuthors, ids?._id] } }, "authorId");
