@@ -21,10 +21,10 @@ function UserCarousel({ users, userId, follow }: { users: any[], userId: string,
         <Image src="/assets/left-arrow.svg" alt="show previous" width={12} height={12} />
       </button>
       <div key={users[current - 1]?.id} className="flex flex-col items-center flex-1">
-        <Link href={`/profile/${users[current - 1]?.id}`}>
+        <Link href={`/profile/${users[current - 1]?.id}`} className="flex flex-col justify-center aspect-square">
           <Image className="rounded-full block" src={users[current - 1]?.image} alt={users[current - 1]?.username} width={52} height={52} />
         </Link>
-        <p className="text-white mt-2 mb-1">@{users[current - 1]?.username}</p>
+        <p className="text-white mt-2 mb-2 text-small-regular">@{users[current - 1]?.username}</p>
         <span className="p-[2px] border border-transparent rounded-lg hover:border-white" onClick={() => {setCurrent(1)}}>
           <HandleFollowBtn authUserId={userId} userId={users[current - 1]?.id} follow={follow} />
         </span>
