@@ -51,7 +51,7 @@ const PoemPost = ({ poem, poemType }: { poem: Poem, poemType: { poemType: string
             <h4 className="self-start mb-2" title="Folder">{poem.folderId.title}</h4>
           </Link>
           <div>
-            {poem.tags?.map((tag: string, i: number) => <h4 key={`#${i}_${tag}`}>#{tag}</h4>)}
+            {poem.tags?.map((tag: string, i: number) => <Link key={`#${i}_${tag}`} href={`/tags/${tag}`}><h4>#{tag}</h4></Link>)}
           </div>
         </div>
       </div>
