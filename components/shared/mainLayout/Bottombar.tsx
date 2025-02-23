@@ -38,7 +38,7 @@ function Bottombar() {
       <div className="bottombar_container">
         {sidebarLinks.map(l => {
           if (!userId && l.route === "/profile") return;
-          const isAcive = (pathname.includes(l.route) && l.route.length > 1) || pathname === l.route;
+          const isAcive = ((pathname.includes(l.route) && l.route.length > 1) || pathname === l.route) || l.label == "Home" && pathname.startsWith("/tags");
           return (
             <Link key={l.label} href={l.route === "/profile" ? `${l.route}/${userId}` : l.route} className={`${isAcive && "bg-green-600"} bottombar_link relative`}>
               {
