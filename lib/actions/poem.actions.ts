@@ -113,31 +113,40 @@ export async function fetchPoem(poemId: string) {
   }
 }
 
-export async function fetchPoemComplex(userId: string | null, action: "count" | "get", skip?: number, limit?: number) {
+export async function fetchPoemComplexV2(userId: string | null, skip: number, limit: number, key?: string) {
   connectToDB();
   try {
     let ids = { _id: null };
     if (userId) {
       ids = await getUsersIds(userId, "Clerk");
     }
+    
     const folders = await Folder.find({ shared: true }).select("_id");
     const folderIds = folders.map(folder => folder._id);
-    if (action === "count") {
-      const amount = await Poem.countDocuments({ authorId: { $ne: ids._id }, folderId: { $in: folderIds } });
-      return amount;
-    }
-    if (action === "get") {
-      if (skip == 0) limit = 2;
 
-      const poem = await Poem.find({ authorId: { $ne: ids._id }, folderId: { $in: folderIds } })
+    if(key) {
+      const regexPattern = new RegExp(key, 'i');
+      const poems = await Poem.find({ authorId: { $ne: ids._id }, folderId: { $in: folderIds }, tags: { $elemMatch: { $regex: regexPattern }}})
         .select("title type content tags")
         .skip(skip!)
         .limit(limit!)
         .populate({ path: "folderId", select: "title" })
         .populate({ path: "authorId", select: "id image username" })
-        .lean().sort({ "_id": "desc" });
-      return JSON.parse(JSON.stringify(poem));
+        .sort({ createdAt: -1 })
+        .lean();
+      return JSON.parse(JSON.stringify(poems));
+    } else {
+      const poems = await Poem.find({ authorId: { $ne: ids._id }, folderId: { $in: folderIds }})
+        .select("title type content tags")
+        .skip(skip!)
+        .limit(limit!)
+        .populate({ path: "folderId", select: "title" })
+        .populate({ path: "authorId", select: "id image username" })
+        .sort({ createdAt: -1 })
+        .lean();
+      return JSON.parse(JSON.stringify(poems));
     }
+
   } catch (error: any) {
     throw new Error("Error occured in fetchPoemComplex: ", error.message);
   }
