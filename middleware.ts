@@ -4,7 +4,7 @@ import { authMiddleware } from "@clerk/nextjs";
 /* TODO: Dodać lub usunąć do ignored routes /api/webhook/clerk */
 /* , "/profile/(.*)" */
 export default authMiddleware({
-    publicRoutes: ["/", "/api/webhook/clerk", "/api/uploadthing", "/profile/(.*)"],
+    publicRoutes: ["/", "/api/webhook/clerk", "/api/uploadthing", "/profile/(.*)", "/tags", "/tags/(.*)"],
     ignoredRoutes: ["/api/webhook/clerk"]
 });
 
