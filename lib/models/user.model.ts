@@ -7,11 +7,11 @@ const userSchema = new mongoose.Schema({
   image: String,
   bio: String,
   onboarded: {type: Boolean, default: false},
-  followers: [{ type: mongoose.Schema.Types.ObjectId, ref: "Author" }], // user is followed by other users
-  following: [{ type: mongoose.Schema.Types.ObjectId, ref: "Author" }], // user is following other users
-  folders: [{ type: mongoose.Schema.Types.ObjectId, ref: "Folder" }], // user has folders
-  likes: [{type: mongoose.Schema.Types.ObjectId, ref: "Poems"}], // user likes poems
-  readNotifs: [{type: mongoose.Schema.Types.ObjectId, ref: "Notifs"}], //notifs' id that user has read
+  followers: [{ type: mongoose.Schema.Types.ObjectId, ref: "Author" }],
+  following: [{ type: mongoose.Schema.Types.ObjectId, ref: "Author" }],
+  folders: [{ type: mongoose.Schema.Types.ObjectId, ref: "Folder" }],
+  likes: [{type: mongoose.Schema.Types.ObjectId, ref: "Poems"}],
+  readNotifs: [{type: mongoose.Schema.Types.ObjectId, ref: "Notifs"}],
 });
 
 const Author = mongoose.models.Author || mongoose.model("Author", userSchema);

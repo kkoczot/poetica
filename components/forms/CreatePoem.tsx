@@ -237,22 +237,3 @@ function CreatePoem({ folderId, userId }: Props) {
 }
 
 export default CreatePoem;
-/*
-Widzę ja zmiany i inaczej miarkuję swe czucie
-Gdy potok znany topi serce i dobija do głowy
-Czuję wagę myśli, których zadaniem mnie trucie
-Gdy usta nasze nie prowadzą rozmowy.
-
-Nie wiem kiedy inaczej zacząłem spoglądać na ciebie
-Kiedy to się stało? Czy ja byłem sobą?
-Ah, myśli o tobie kiełkują we mnie jak w glebie
-Bylibyśmy piękną świata ozdobą.
-
-Bo sarnie twe oczy patrzą na mnie z dołu
-A z góry ja patrzę na śliczne twe oczęta
-Siądźmy razem przy kominku, usiądźmy do stołu
-
-W smak jesteś mi ty, nie inne dziewczęta
-Widzę kolor twych włosów, płomień uczucia
-Niczym przewodnika dla ciał naszych snucia.
-*/

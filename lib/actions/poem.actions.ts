@@ -168,7 +168,7 @@ export async function deletePoem(poemId: string) {
   }
 }
 
-export async function handleLike(authUserId: string | undefined, poemId: string, action: "check" | "handle") { //Chyba git jest xd
+export async function handleLike(authUserId: string | undefined, poemId: string, action: "check" | "handle") {
   async function check() {
     const contains = await Author.findOne({ id: authUserId, likes: { $in: poemId } });
     return Boolean(contains);
@@ -176,9 +176,6 @@ export async function handleLike(authUserId: string | undefined, poemId: string,
 
   connectToDB();
   if (!authUserId) return;
-  // console.log("authUserId: ", authUserId);
-  // console.log("poemId: ", poemId);
-  // console.log("action: ", action);
   try {
     if (action === "check") {
       const contains = await check();
@@ -187,11 +184,11 @@ export async function handleLike(authUserId: string | undefined, poemId: string,
     else if (action === "handle") {
       const contains = await check();
       const { _id } = await fetchUser(authUserId);
-      if (contains) { /*Delete poemId from Author.likes && Delete Author._id from Poem.favourite*/
+      if (contains) {
         await Author.findOneAndUpdate({ id: authUserId }, { $pull: { likes: poemId } });
         await Poem.findByIdAndUpdate(poemId, { $pull: { favourite: _id } });
       }
-      else { /*Add poemId to Author.likes && Add Author._id to Poem.favourite*/
+      else {
         await Author.findOneAndUpdate({ id: authUserId }, { $push: { likes: poemId } });
         await Poem.findByIdAndUpdate(poemId, { $push: { favourite: _id } });
       }
@@ -203,7 +200,7 @@ export async function handleLike(authUserId: string | undefined, poemId: string,
   }
 }
 
-export async function totalFetchLikedPoems(authorId: string, poemIds: string[]) { //użyć populate i chat GPT
+export async function totalFetchLikedPoems(authorId: string, poemIds: string[]) { //użyć populate
   mongoose.set('strictPopulate', false);
   connectToDB();
   try {

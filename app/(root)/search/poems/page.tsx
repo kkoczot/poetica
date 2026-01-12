@@ -9,9 +9,6 @@ import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import SearchCard from "@/components/shared/SearchCard";
 import handlePagination from "@/components/PaginationFunctions";
 
-// Odpowiada za szukanie po: nazwie usera, nazwie wiersza, tagach || ogarnąć system stronicowania dla wyszukiwań
-// (Najpierw zrobić wyszukiwania / potem stronicowanie - patrzeć /favourite)
-
 const Page = () => {
   const dpp = 20;
   const router = useRouter();
@@ -38,7 +35,6 @@ const Page = () => {
     const data = await getData();
     !show && setShow(prev => !prev);
     setData(data);
-    console.log(data);
     refatch && router.push(pathname);
   }
 
@@ -91,7 +87,7 @@ const Page = () => {
         </div>
         <div className="border-l-4 border-green-600 pt-2 pb-5 pl-4">
           <label htmlFor="type" className="text-white block mb-1">Select a type of poem</label>
-          <Select defaultValue="any" onValueChange={e => setSearch(prev => ({ ...prev, poemType: e }))}> {/* onValueChange={field.onChange} defaultValue={field.value} */}
+          <Select defaultValue="any" onValueChange={e => setSearch(prev => ({ ...prev, poemType: e }))}>
             <SelectTrigger id="type">
               <SelectValue placeholder="Select poem type" />
             </SelectTrigger>
@@ -117,7 +113,7 @@ const Page = () => {
         <div className="border-l-4 border-green-600 pt-2 pb-5 pl-4">
           <label htmlFor="sort" className="text-white block mb-1">Sort by amout of hearts</label>
           <div className="flex gap-4">
-            <Select defaultValue="any" onValueChange={e => setSearch(prev => ({ ...prev, sortOrder: e }))}> {/* onValueChange={field.onChange} defaultValue={field.value} */}
+            <Select defaultValue="any" onValueChange={e => setSearch(prev => ({ ...prev, sortOrder: e }))}>
               <SelectTrigger id="sort">
                 <SelectValue placeholder="Select/Filter by poems amount" />
               </SelectTrigger>

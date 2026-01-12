@@ -5,17 +5,6 @@ import { fetchUser } from "@/lib/actions/user.actions";
 import { currentUser } from "@clerk/nextjs";
 import { redirect } from "next/navigation";
 
-/*
-
-Zastanowić się w jaki sposób zrobić tę stronę, tj:
-- W jaki sposób w ogóle wyświetlić dane? grid, flex, ramki dla konkretnych wierszy itp.
-- Czy wyświetlać całe wiersze czy tylko kawałek do ewentualnego rozwinięcia albo otawrcia na innej stronie
-- Czy dodać jakieś elementy filtrowania czego się szuka (typ wiersza, autor wiersza)
-- Czy dodać jakieś elementy wyszukiwana (autora wiersza, frazy w wierszu)
-- System paginacji
-
-*/
-
 const Page = async () => {
   const user = await currentUser();
   if (!user) {

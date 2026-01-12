@@ -21,9 +21,8 @@ const Page = async ({ params }: { params: { profileId: string, folderId: string 
   const fetchedFolder = await fetchFolder(params.folderId);
   
   if (!fetchedFolder) redirect(`/profile/${params.profileId}`);
-  // console.log(fetchedFolder);
 if (!fetchedFolder.shared && user?.id !== params.profileId) redirect(`/profile/${params.profileId}`);
-  const showPoems = fetchedFolder.shared || (user && user.id === params.profileId); //
+  const showPoems = fetchedFolder.shared || (user && user.id === params.profileId);
   const pathname = `/profile/${params.profileId}/${params.folderId}`;
 
   return (
@@ -33,7 +32,7 @@ if (!fetchedFolder.shared && user?.id !== params.profileId) redirect(`/profile/$
           <h1 className="head-text">Folder: {fetchedFolder.title}</h1>
           <div className="flex flex-row gap-4">
             {
-              user && user.id === params.profileId && fetchedFolder.deletable && ( //
+              user && user.id === params.profileId && fetchedFolder.deletable && (
                 <Link href={`/profile/${params.profileId}/${params.folderId}/edit`}>
                   <div className='flex cursor-pointer gap-3 rounded-lg bg-dark-3 px-4 py-2 hover:bg-dark-2'>
                     <Image
@@ -48,7 +47,7 @@ if (!fetchedFolder.shared && user?.id !== params.profileId) redirect(`/profile/$
               )
             }
             {
-              user && user.id === params.profileId && ( //
+              user && user.id === params.profileId && (
                 <Link href={`/profile/${params.profileId}/${params.folderId}/create-poem`}>
                   <div className="flex cursor-pointer gap-3 rounded-lg bg-dark-3 px-4 py-2 hover:bg-dark-2">
                     <Image
@@ -63,8 +62,8 @@ if (!fetchedFolder.shared && user?.id !== params.profileId) redirect(`/profile/$
               )
             }
             {
-              user && user.id === params.profileId && fetchedFolder.deletable && ( //
-                <DeleteFolderBtn authorId={JSON.parse(JSON.stringify(params.profileId))} folderId={params.folderId} /> //
+              user && user.id === params.profileId && fetchedFolder.deletable && (
+                <DeleteFolderBtn authorId={JSON.parse(JSON.stringify(params.profileId))} folderId={params.folderId} />
               )
             }
           </div>
@@ -74,7 +73,6 @@ if (!fetchedFolder.shared && user?.id !== params.profileId) redirect(`/profile/$
         <div className='mt-12 h-0.5 w-full bg-dark-3' />
       </div>
       <div className="mt-10">
-        {/* <div className="flex sm:flex-col justify-between gap-4"> */}
         <div className="grid grid-cols-1 xl:grid-cols-2 gap-y-12 gap-x-6">
           {
             showPoems && (fetchedFolder.poems.length < 1 ? (<p className="text-red-500">No poems here yet!</p>) : (

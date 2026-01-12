@@ -8,9 +8,6 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import SearchCard from "@/components/shared/SearchCard";
 import handlePagination from "@/components/PaginationFunctions";
 
-// Odpowiada za szukanie po: nazwie usera, nazwie wiersza, tagach || ogarnąć system stronicowania dla wyszukiwań
-// (Najpierw zrobić wyszukiwania / potem stronicowanie - patrzeć /favourite)
-
 const Page = () => {
   const dpp = 20;
   const router = useRouter();
@@ -77,7 +74,7 @@ const Page = () => {
         <div className="border-l-4 border-green-600 pt-2 pb-5  pl-4">
           <label htmlFor="sort" className="text-white block mb-1">Sort by amount of poems</label>
           <div className="flex gap-4">
-            <Select defaultValue="any" onValueChange={e => setSearch(prev => ({ ...prev, sortOrder: e }))}> {/* onValueChange={field.onChange} defaultValue={field.value} */}
+            <Select defaultValue="any" onValueChange={e => setSearch(prev => ({ ...prev, sortOrder: e }))}>
               <SelectTrigger id="sort">
                 <SelectValue placeholder="Select/Filter by poems amount" />
               </SelectTrigger>

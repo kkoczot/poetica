@@ -7,9 +7,6 @@ import { searchSimple as searchSimpleFolders } from "@/lib/actions/folder.action
 import { searchSimple as searchSimplePoems } from "@/lib/actions/poem.actions";
 import SearchCard from "@/components/shared/SearchCard";
 
-// Odpowiada za szukanie po: nazwie usera, nazwie wiersza, tagach || ogarnąć system stronicowania dla wyszukiwań
-// (Najpierw zrobić wyszukiwania / potem stronicowanie - patrzeć /favourite)
-
 const Page = () => {
   const [search, setSearch] = useState("");
   const [show, setShow] = useState(false);
@@ -18,11 +15,8 @@ const Page = () => {
 
   async function getData() {
     const foundAuthors = await searchSimpleAuthors(search);
-    console.log(" --- foundAuthors: ", foundAuthors);
     const foundFolders = await searchSimpleFolders(search);
-    console.log(" --- foundFolders: ", foundFolders);
     const foundPoems = await searchSimplePoems(search);
-    console.log(" --- foundPoems: ", foundPoems);
     return [foundAuthors, foundFolders, foundPoems];
   }
 

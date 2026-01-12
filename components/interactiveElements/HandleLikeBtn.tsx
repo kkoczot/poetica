@@ -18,7 +18,6 @@ function HandleLikeBtn({ authUserId, poemId, length, liked }: Props) {
       disabled={!authUserId}
       onClick={async () => {
         await handleLike(authUserId, poemId, "handle");
-        // router.refresh();
       }}
       className="flex cursor-pointer gap-3 rounded-lg bg-dark-3 px-4 py-2 text-light-2 disabled:bg-dark-4 hover:bg-dark-2"
     >

@@ -1,102 +1,69 @@
-This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+# Poetica (social media site)
 
-## Getting Started
+This site on [Netlify](https://poetica.netlify.app/)
 
-First, run the development server:
+Project based on app [threads](https://www.youtube.com/watch?v=O5cmLDVTgAs) made by @adrianhajdin
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+## Short introdiction
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+A full stack social media app focused on poetry. Good design combined with many useful functions makes this app ideal for those who want to share with other people with their poems. This app contains many features that are necessary in nowadays social media apps.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Used technologies
 
-This project uses [`next/font`](https://nextjs.org/docs/basic-features/font-optimization) to automatically optimize and load Inter, a custom Google Font.
+- Next.js
+- MongoDB
+- Typescript
+- TailwindCSS
+- Shadcn UI
+- Clerk
+- uploadthing
+- svix
 
-## Learn More
+### Other dependencies
 
-To learn more about Next.js, take a look at the following resources:
+- Zod
+- React Hook Form
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## features
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js/) - your feedback and contributions are welcome!
+- **Authentication**: Authentication using Clerk for email and password or Google logins.
 
-## Deploy on Vercel
+- **Account management**: also provided by Clerk allows comprehensive profile management.
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+- **Visually Appealing Pages**: Well-designed pages with an intuitive layout of elements for an engaging user experience.
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
+- **Complex Search Pages with Pagination**: Search feature divided into several pages for easier exploration and more complex searching things like users, folders or poems.
 
+- **Favourite Poems Page with Pagination**: A page containing liked poems with the ability to filter results for faster searching.
 
-Instalacja:
-@clerk/nextjs
-mongoose
-tailwindcss-animate
-shadcn-ui@latest
-@uploadthing/react - do uploadowania zdjęć
-uploadthing
-svix - do używania webhooks
+- **Suggested User Page**: A page with 3 categories showing authors that have the most poems; have the most followers; with you have the most mutual friends.
 
-email: mickiewicz@poetica.pl
-username: mickiewicz
-password: mickiewicz1@
+- **Notifications Page**: Display notifications and news added by the admin of this app to enhance user engagement.
 
-email: slowacki@poetica.pl
-username: slowacki
-password: slowacki1@
+- **Right Sidebar**: For quick access to unfollowed/followed authors.
 
+- **Profile Page**: A user profile page used to present information, a list and availability of folders, and to modify profile settings.
 
--------------------------------------------------------------------------------------------------------------
+- **Create/Edit Folder Page**: Dedicated pages for users to create folders and edit them in an easy way.
 
-INFO: Clerk: The request to /search is being redirected because there is no signed-in user, and the path is not included in `ignoredRoutes` or `publicRoutes`. To prevent this behavior, choose one of:
+- **Create/Edit Poem Page**: Dedicated pages for users to create poems and edit them in an easy way.
 
-1. To make the route accessible to both signed in and signed out users, add "/search" to the `publicRoutes` array passed to authMiddleware
-2. To prevent Clerk authentication from running at all, add "/search" to the `ignoredRoutes` array passed to authMiddleware
-3. Pass a custom `afterAuth` to authMiddleware, and replace Clerk's default behavior of redirecting unless a route is included in publicRoutes
+- **Data Validation with Zod**: Data integrity with data validation using Zod.
 
-For additional information about middleware, please visit https://clerk.com/docs/nextjs/middleware
-(This log only appears in development mode, or if `debug: true` is passed to authMiddleware)
-INFO: Clerk: The request to /credits is being redirected because there is no signed-in user, and the path is not included in `ignoredRoutes` or `publicRoutes`. To 
-prevent this behavior, choose one of:
+- **Form Management with React Hook Form**: Efficiently manage forms with React Hook Form to streamline user data entry.
 
-1. To make the route accessible to both signed in and signed out users, add "/credits" to the `publicRoutes` array passed to authMiddleware
-2. To prevent Clerk authentication from running at all, add "/credits" to the `ignoredRoutes` array passed to authMiddleware
-3. Pass a custom `afterAuth` to authMiddleware, and replace Clerk's default behavior of redirecting unless a route is included in publicRoutes
+- **UploadThing for File Uploads**: File uploads using UploadThing to ensure seamless media sharing.
 
-For additional information about middleware, please visit https://clerk.com/docs/nextjs/middleware
-(This log only appears in development mode, or if `debug: true` is passed to authMiddleware)
-INFO: Clerk: The request to /profile/user_2eea4HTJHMWmw1leW363bHc5wR0 is being redirected because there is no signed-in user, and the path is not included in `ignoredRoutes` or `publicRoutes`. To prevent this behavior, choose one of:
+- **Real-Time Events Listening**: Listening real-time events with webhooks to keep users updated.
 
-1. To make the route accessible to both signed in and signed out users, add "/profile/user_2eea4HTJHMWmw1leW363bHc5wR0" to the `publicRoutes` array passed to authMiddleware
-2. To prevent Clerk authentication from running at all, add "/profile/user_2eea4HTJHMWmw1leW363bHc5wR0" to the `ignoredRoutes` array passed to authMiddleware      
-3. Pass a custom `afterAuth` to authMiddleware, and replace Clerk's default behavior of redirecting unless a route is included in publicRoutes
+- **Server Side Rendering**: Utilize Next.js with Server Side Rendering for better performance and SEO advantages.
 
-For additional information about middleware, please visit https://clerk.com/docs/nextjs/middleware
-(This log only appears in development mode, or if `debug: true` is passed to authMiddleware)
+- **Complex functions**: Ensure proper operation of the application and its systems, such as the following system, likes or the availability of folders and poems.
 
-------------------------------------------------------------------------------------------------------------------
+- **Infinite Scroll Feature**: Added to the homepage, giving the app a real social app feel.
 
-INFO: Clerk: The request to /notifications is being redirected because there is no signed-in user, and the path is not included in `ignoredRoutes` or `publicRoutes`. To prevent this behavior, choose one of:
+- **MongoDB with Complex Schemas**: Handle complex schemas, relations and a lot of data using MongoDB.
 
-1. To make the route accessible to both signed in and signed out users, add "/notifications" to the `publicRoutes` array passed to authMiddleware
-2. To prevent Clerk authentication from running at all, add "/notifications" to the `ignoredRoutes` array passed to authMiddleware
-3. Pass a custom `afterAuth` to authMiddleware, and replace Clerk's default behavior of redirecting unless a route is included in publicRoutes
+- **Well-balanced Performance**: Best performance for good user experience with the complexity of the pages and their abilities.
 
-For additional information about middleware, please visit https://clerk.com/docs/nextjs/middleware
-(This log only appears in development mode, or if `debug: true` is passed to authMiddleware)
-INFO: Clerk: The request to /notifications is being redirected because there is no signed-in user, and the path is not included in `ignoredRoutes` or `publicRoutes`. To prevent this behavior, choose one of:
-
-1. To make the route accessible to both signed in and signed out users, add "/notifications" to the `publicRoutes` array passed to authMiddleware
-2. To prevent Clerk authentication from running at all, add "/notifications" to the `ignoredRoutes` array passed to authMiddleware
-3. Pass a custom `afterAuth` to authMiddleware, and replace Clerk's default behavior of redirecting unless a route is included in publicRoutes
-
-For additional information about middleware, please visit https://clerk.com/docs/nextjs/middleware
-(This log only appears in development mode, or if `debug: true` is passed to authMiddleware)
+- **Next.js Route Groups**: Next.js route groups for better file organization.

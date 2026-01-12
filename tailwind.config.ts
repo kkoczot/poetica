@@ -17,154 +17,154 @@ module.exports = {
       },
     },
     fontSize: {
-      "heading1-bold": [ // JEST
+      "heading1-bold": [
         "36px",
         {
           lineHeight: "140%",
           fontWeight: "700",
         },
       ],
-      "heading1-semibold": [ // NIE MA
+      "heading1-semibold": [
         "36px",
         {
           lineHeight: "140%",
           fontWeight: "600",
         },
       ],
-      "heading2-bold": [ // JEST
+      "heading2-bold": [
         "30px",
         {
           lineHeight: "140%",
           fontWeight: "700",
         },
       ],
-      "heading2-semibold": [ // NIE MA
+      "heading2-semibold": [
         "30px",
         {
           lineHeight: "140%",
           fontWeight: "600",
         },
       ],
-      "heading3-bold": [ // JEST
+      "heading3-bold": [
         "24px",
         {
           lineHeight: "140%",
           fontWeight: "700",
         },
       ],
-      "heading4-medium": [ // JEST
+      "heading4-medium": [
         "20px",
         {
           lineHeight: "140%",
           fontWeight: "500",
         },
       ],
-      "body-bold": [ // JEST
+      "body-bold": [
         "18px",
         {
           lineHeight: "140%",
           fontWeight: "700",
         },
       ],
-      "body-semibold": [ // NIE MA
+      "body-semibold": [
         "18px",
         {
           lineHeight: "140%",
           fontWeight: "600",
         },
       ],
-      "body-medium": [ // NIE MA
+      "body-medium": [
         "18px",
         {
           lineHeight: "140%",
           fontWeight: "500",
         },
       ],
-      "body-normal": [ // NIE MA
+      "body-normal": [
         "18px",
         {
           lineHeight: "140%",
           fontWeight: "400",
         },
       ],
-      "body1-bold": [ // NIE MA
+      "body1-bold": [
         "18px",
         {
           lineHeight: "140%",
           fontWeight: "700",
         },
       ],
-      "base-regular": [ // JEST
+      "base-regular": [
         "16px",
         {
           lineHeight: "140%",
           fontWeight: "400",
         },
       ],
-      "base-medium": [ // JEST
+      "base-medium": [
         "16px",
         {
           lineHeight: "140%",
           fontWeight: "500",
         },
       ],
-      "base-semibold": [ // JEST
+      "base-semibold": [
         "16px",
         {
           lineHeight: "140%",
           fontWeight: "600",
         },
       ],
-      "base1-semibold": [ // NIE MA
+      "base1-semibold": [
         "16px",
         {
           lineHeight: "140%",
           fontWeight: "600",
         },
       ],
-      "small-regular": [ // JEST
+      "small-regular": [
         "14px",
         {
           lineHeight: "140%",
           fontWeight: "400",
         },
       ],
-      "small-medium": [ // NIE MA
+      "small-medium": [
         "14px",
         {
           lineHeight: "140%",
           fontWeight: "500",
         },
       ],
-      "small-semibold": [ // NIE MA
+      "small-semibold": [
         "14px",
         {
           lineHeight: "140%",
           fontWeight: "600",
         },
       ],
-      "subtle-medium": [ // JEST
+      "subtle-medium": [
         "12px",
         {
           lineHeight: "16px",
           fontWeight: "500",
         },
       ],
-      "subtle-semibold": [ // NIE MA
+      "subtle-semibold": [
         "12px",
         {
           lineHeight: "16px",
           fontWeight: "600",
         },
       ],
-      "tiny-medium": [ // NIE MA
+      "tiny-medium": [
         "10px",
         {
           lineHeight: "140%",
           fontWeight: "500",
         },
       ],
-      "x-small-semibold": [ // NIE MA
+      "x-small-semibold": [
         "7px",
         {
           lineHeight: "9.318px",
