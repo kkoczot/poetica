@@ -47,17 +47,28 @@ function CreatePoem({ folderId, userId }: Props) {
     defaultValues: {
       title: '',
       type: '',
+      tag1: '',
+      tag2: '',
+      tag3: '',
       content: '',
     }
   });
 
   const onSubmit = async (values: z.infer<typeof PoemValidation>) => {
+    if(isLoading) return;
     setIsLoading(false);
+    if(!values.tag2.trim() && values.tag3.trim()) {
+      values.tag2 = values.tag3;
+      values.tag3 = '';
+    }
     await createPoem({
       folderId: folderId,
       authorId: userId,
       title: values.title,
       type: values.type,
+      tag1: values.tag1.trim(),
+      tag2: values.tag2.trim(),
+      tag3: values.tag3.trim(),
       content: values.content,
     })
     setIsLoading(true);
@@ -125,6 +136,74 @@ function CreatePoem({ folderId, userId }: Props) {
             </FormItem>
           )}
         />
+        <div>
+        <p className="text-base-semibold text-light-2 mb-2 md:mb-3">Tags</p>
+          <FormDescription className="mb-3 hidden max-md:block">
+          # sign will be added automatically
+          </FormDescription>
+          <div className="flex gap-4 max-md:flex-col">
+            <FormField
+              control={form.control}
+              name="tag1"
+              render={({ field }) => (
+                <FormItem className="flex w-full flex-col gap-3">
+                  <FormLabel className="text-base-semibold text-light-2">
+                    #Tag1
+                  </FormLabel>
+                  <FormControl className="no-focus border border-dark-4 bg-dark-3">
+                    <Input
+                      className="account-form_input no-focus"
+                      type="text"
+                      {...field}
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+              />
+            <FormField
+              control={form.control}
+              name="tag2"
+              render={({ field }) => (
+                <FormItem className="flex w-full flex-col gap-3">
+                  <FormLabel className="text-base-semibold text-light-2">
+                    #Tag2
+                  </FormLabel>
+                  <FormControl className="no-focus border border-dark-4 bg-dark-3">
+                    <Input
+                      className="account-form_input no-focus"
+                      type="text"
+                      {...field}
+                      disabled={!Boolean(form.watch().tag1.trim())}
+                      />
+                  </FormControl>
+                </FormItem>
+              )}
+              />
+            <FormField
+              control={form.control}
+              name="tag3"
+              render={({ field }) => (
+                <FormItem className="flex w-full flex-col gap-3">
+                  <FormLabel className="text-base-semibold text-light-2">
+                    #Tag3
+                  </FormLabel>
+                  <FormControl className="no-focus border border-dark-4 bg-dark-3">
+                    <Input
+                      className="account-form_input no-focus"
+                      type="text"
+                      {...field}
+                      disabled={!Boolean(form.watch().tag1.trim()) || !Boolean(form.watch().tag2.trim())}
+                      />
+                  </FormControl>
+                </FormItem>
+              )}
+              />
+          </div>
+          <FormDescription className="invisible md:visible">
+            # sign will be added automatically
+          </FormDescription>
+        </div>
         <FormField
           control={form.control}
           name="content"
@@ -135,7 +214,7 @@ function CreatePoem({ folderId, userId }: Props) {
               </FormLabel>
               <FormControl className="no-focus border border-dark-4 bg-dark-3">
                 <Textarea
-                  className="account-form_input no-focus"
+                  className="account-form_input no-focus custom-scrollbar"
                   rows={40}
                   {...field}
                 />

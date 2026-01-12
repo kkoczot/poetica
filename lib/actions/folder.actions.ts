@@ -104,6 +104,31 @@ export async function getAllUserFolders(userId: string) {
   }
 };
 
+export async function checkWhatTypeOfFolder(folderId: string) {
+  function findMostNumerousTags(typeCounts: { [tag: string]: number } ): string[] {
+    const maxCount = Math.max(...Object.values(typeCounts));
+    return Object.keys(typeCounts).filter((tag: string) => typeCounts[tag] === maxCount);
+  }
+  
+  connectToDB();
+  try {
+    const typeAmount: { [type: string]: number } = {};
+    const folderPoemInfo = await Folder.findById(folderId).select("poems").populate({path: "poems", model: "Poem", select: "type"}).exec();
+
+    folderPoemInfo.poems?.map((poem: {_id: string, type: string}) => {
+      if(!typeAmount[poem.type]) typeAmount[poem.type] = 1;
+      else typeAmount[poem.type] += 1;
+    });
+
+    const mostNumerousTags = findMostNumerousTags(typeAmount);
+    // console.log("typeAmount: ", typeAmount);
+    // console.log("mostNumerousTags: ", mostNumerousTags);
+    return mostNumerousTags;
+  } catch (error) {
+    throw new Error("Failed to check what kind of poems given folder has");
+  }
+}
+
 export async function searchSimple(text: string) {
   connectToDB();
   try {

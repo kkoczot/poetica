@@ -8,6 +8,7 @@ const poemSchema = new mongoose.Schema({
   content: { type: String, required: true },
   favourite: [{ type: mongoose.Schema.Types.ObjectId, ref: "Author" }],
   comments: [{ type: mongoose.Schema.Types.ObjectId, ref: "Comment" }],
+  tags: [{ type: String }],
 });
 
 const Poem = mongoose.models.Poem || mongoose.model("Poem", poemSchema);

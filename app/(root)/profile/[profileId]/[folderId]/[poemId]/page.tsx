@@ -44,7 +44,10 @@ const Page = async ({ params }: { params: { profileId: string, folderId: string,
           </div>
         </div>
         <h1 className="head-text">{poemData.title}</h1>
-        <p className="text-light-2">Type: {poemData.type}</p>
+        <p className="text-light-2 mb-2">Type: {poemData.type}</p>
+        <div>
+          {poemData.tags?.map((tag: string, i: number) => <h4 key={`#${i}_${tag}`} className="text-light-2">#{tag}</h4>)}
+        </div>
       </div>
       <p className="text-light-2 whitespace-break-spaces">{poemData.content}</p>
     </section>

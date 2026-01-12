@@ -32,13 +32,13 @@ interface Props {
     folderId: string;
     authorId: string;
     title: string;
-    content: string;
     type: string;
+    tags: string[];
+    content: string;
   };
   profileId: string;
   folders: any;
 }
-
 function EditPoem({ poem, profileId, folders }: Props) {
   const [isLoading, setIsLoading] = useState(false);
   const pathname = usePathname();
@@ -49,18 +49,61 @@ function EditPoem({ poem, profileId, folders }: Props) {
     defaultValues: {
       title: poem.title,
       type: undefined,
+      tag1: poem.tags[0] || '',
+      tag2: poem.tags[1] || '',
+      tag3: poem.tags[2] || '',
       folderDest: undefined,
       content: poem.content,
     },
   })
 
   const onSubmit = async (values: z.infer<typeof EditPoemValidation>) => {
+    if(isLoading) return;
     setIsLoading(true);
-    if ((values.title != poem.title) || (values.content != poem.content) || (values.type != poem.type && values.type != undefined) || (values.folderDest != poem.folderId && values.folderDest != undefined)) {
+
+    // const toCheck: (keyof z.infer<typeof EditPoemValidation>)[]  = ["title", "content", "type", "folderDest", "tag1", "tag2", "tag3"];
+
+    // console.log(toCheck.map((checkItem: string) => {
+    //   if(checkItem.includes("tag")) {
+
+    //   } else if()
+    //   values[checkItem] != poem[checkItem] && values[checkItem] != undefined
+    // }));
+
+    // if(toCheck.map((checkItem: string) => values[checkItem] != poem[checkItem] && values[checkItem] != undefined).some(item => item)) {
+    //   console.log("Wykryto zmiany!");
+    // } else {
+    //   console.log("Zmian nie wykryto!");
+    // }
+
+    // values.title != poem.title) 
+    // (values.content != poem.content) 
+    // (values.type != poem.type && values.type != undefined)
+    // (values.folderDest != poem.folderId && values.folderDest != undefined
+    // values.tag1 != poem.tags[0]
+    // values.tag2 != poem.tags[1] && values.tag2 != undefined
+    // values.tag3 != poem.tags[2] && values.tag3 != undefined
+    
+    // console.log(values);
+
+    if((values.title != poem.title)
+      || (values.content != poem.content)
+      || (values.type != poem.type && values.type != undefined)
+      || (values.folderDest != poem.folderId && values.folderDest != undefined)
+      || (values.tag1 != poem.tags[0] && values.tag1 != '')
+      || (values.tag2 != poem.tags[1] && values.tag2 != '')
+      || (values.tag3 != poem.tags[2] && values.tag3 != '')) {
+        if(!values.tag2 && values.tag3) {
+          values.tag2 = values.tag3;
+          values.tag3 = '';
+        }
       await editPoem({
         poemId: poem.poemId,
         title: values.title,
         content: values.content,
+        tag1: values.tag1.trim(),
+        tag2: values.tag2.trim(),
+        tag3: values.tag3.trim(),
         type: values.type || poem.type || undefined,
         folderDest: values.folderDest == poem.folderId ? undefined : values.folderDest,
         oldFolder: poem.folderId
@@ -132,6 +175,76 @@ function EditPoem({ poem, profileId, folders }: Props) {
             </FormItem>
           )}
         />
+        <div>
+          <p className="text-base-semibold text-light-2 mb-2 md:mb-3">Tags</p>
+          <FormDescription className="mb-3 hidden max-md:block">
+          # sign will be added automatically
+          </FormDescription>
+          <div className="flex gap-4 max-md:flex-col">
+            <FormField
+              control={form.control}
+              name="tag1"
+              render={({ field }) => (
+                <FormItem className="flex w-full flex-col gap-3">
+                  <FormLabel className="text-base-semibold text-light-2">
+                    #Tag1
+                  </FormLabel>
+                  <FormControl className="no-focus border border-dark-4 bg-dark-3">
+                    <Input
+                      className="account-form_input no-focus"
+                      type="text"
+                      {...field}
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+              />
+            <FormField
+              control={form.control}
+              name="tag2"
+              render={({ field }) => (
+                <FormItem className="flex w-full flex-col gap-3">
+                  <FormLabel className="text-base-semibold text-light-2">
+                    #Tag2
+                  </FormLabel>
+                  <FormControl className="no-focus border border-dark-4 bg-dark-3">
+                    <Input
+                      className="account-form_input no-focus"
+                      type="text"
+                      {...field}
+                      disabled={!Boolean(form.watch().tag1.trim())}
+                      />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+              />
+            <FormField
+              control={form.control}
+              name="tag3"
+              render={({ field }) => (
+                <FormItem className="flex w-full flex-col gap-3">
+                  <FormLabel className="text-base-semibold text-light-2">
+                    #Tag3
+                  </FormLabel>
+                  <FormControl className="no-focus border border-dark-4 bg-dark-3">
+                    <Input
+                      className="account-form_input no-focus"
+                      type="text"
+                      {...field}
+                      disabled={!Boolean(form.watch().tag1.trim()) || !Boolean(form.watch().tag2.trim())}
+                      />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+              />
+          </div>
+          <FormDescription className="invisible md:visible">
+            # sign will be added automatically
+          </FormDescription>
+        </div>
         <FormField
           control={form.control}
           name="folderDest"
@@ -169,7 +282,7 @@ function EditPoem({ poem, profileId, folders }: Props) {
               </FormLabel>
               <FormControl className="no-focus border border-dark-4 bg-dark-3">
                 <Textarea
-                  className="account-form_input no-focus"
+                  className="account-form_input no-focus custom-scrollbar"
                   rows={40}
                   {...field}
                 />

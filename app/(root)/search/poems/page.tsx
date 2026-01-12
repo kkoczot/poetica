@@ -1,6 +1,6 @@
 "use client";
 import Image from "next/image";
-import { useEffect, useState } from "react";
+import { useActionState, useEffect, useState } from "react";
 import { Input } from "@/components/ui/input";
 import { searchComplex } from "@/lib/actions/poem.actions";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
@@ -14,7 +14,10 @@ const Page = () => {
   const router = useRouter();
   const pathname = usePathname();
   const pageNum = Number(useSearchParams().get("page")) || 1;
-  const [search, setSearch] = useState({ text: "", poemType: "any", sortOrder: "any" });
+
+  // useActionState()
+
+  const [search, setSearch] = useState({ text: "", userTags: "", poemType: "any", sortOrder: "any" });
   const [show, setShow] = useState(false);
   const [data, setData] = useState<any[]>([]);
   const [howManyResults, setHowManyResults] = useState<number>(0);
@@ -49,7 +52,7 @@ const Page = () => {
         <SearchCard key={String(poem._id)} type="poem" textInfo={poem.title} url={`/profile/${poem.authorDetails.id}/${poem.folderId}/${poem._id}`} linkInfo="poem" poemType={poem.type} />
       ));
     } else {
-      poems.push(<p className="text-red-500">Poems not found</p>);
+      poems.push(<p key="handle-title-error" className="text-red-500">Poems not found</p>);
     }
     return poems.map(item => item);
   }
@@ -70,6 +73,16 @@ const Page = () => {
             onChange={e => setSearch(prev => ({ ...prev, text: e.target.value }))}
             placeholder="Search poem title"
             maxLength={50}
+          />
+        </div>
+        <div className="border-l-4 border-green-600 pt-2 pb-5 pl-4">
+          <label htmlFor="tags" className="text-white block mb-1">Tags</label>
+          <Input
+          id="tags"
+          value={search.userTags}
+          onChange={e => setSearch(prev => ({... prev, userTags: e.target.value}))}
+          placeholder="#first-tag  #second-tag  #third-tag"
+          maxLength={60}
           />
         </div>
         <div className="border-l-4 border-green-600 pt-2 pb-5 pl-4">

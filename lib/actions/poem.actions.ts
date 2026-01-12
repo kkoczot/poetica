@@ -13,10 +13,18 @@ interface Params {
   title: string,
   type: string,
   content: string,
+  tag1: string,
+  tag2: string,
+  tag3: string,
 }
 
-export async function createPoem({ folderId, authorId, title, type, content }: Params) {
+export async function createPoem({ folderId, authorId, title, type, content, tag1, tag2, tag3 }: Params) {
   connectToDB();
+
+  const tags = [tag1];
+  if (tag2) tags.push(tag2);
+  if (tag3) tags.push(tag3);
+
   try {
     const createdPoem = await Poem.create({
       authorId,
@@ -24,7 +32,8 @@ export async function createPoem({ folderId, authorId, title, type, content }: P
       title,
       type,
       content,
-    })
+      tags,
+    });
 
     await Folder.findByIdAndUpdate(folderId, {
       $push: { poems: createdPoem._id },
@@ -41,11 +50,18 @@ interface EditParams {
   content: string,
   type: string | undefined,
   folderDest: string | undefined,
-  oldFolder: string
+  oldFolder: string,
+  tag1: string,
+  tag2: string,
+  tag3: string,
 }
 
-export async function editPoem({ poemId, title, content, type, folderDest, oldFolder }: EditParams) {
+export async function editPoem({ poemId, title, content, type, folderDest, oldFolder, tag1, tag2, tag3 }: EditParams) {
   connectToDB();
+
+  const tags = [tag1];
+  if (tag2) tags.push(tag2);
+  if (tag3) tags.push(tag3);
 
   try {
     const fol = folderDest ? folderDest : oldFolder;
@@ -54,6 +70,7 @@ export async function editPoem({ poemId, title, content, type, folderDest, oldFo
       {
         $set: {
           title: title,
+          tags: tags,
           content: content,
           type: type,
           folderId: fol,
@@ -96,31 +113,40 @@ export async function fetchPoem(poemId: string) {
   }
 }
 
-export async function fetchPoemComplex(userId: string | null, action: "count" | "get", skip?: number, limit?: number) {
+export async function fetchPoemComplexV2(userId: string | null, skip: number, limit: number, key?: string) {
   connectToDB();
   try {
     let ids = { _id: null };
     if (userId) {
       ids = await getUsersIds(userId, "Clerk");
     }
+    
     const folders = await Folder.find({ shared: true }).select("_id");
     const folderIds = folders.map(folder => folder._id);
-    if (action === "count") {
-      const amount = await Poem.countDocuments({ authorId: { $ne: ids._id }, folderId: { $in: folderIds } });
-      return amount;
-    }
-    if (action === "get") {
-      if (skip == 0) limit = 2;
 
-      const poem = await Poem.find({ authorId: { $ne: ids._id }, folderId: { $in: folderIds } })
-      .select("title type content")
-      .skip(skip!)
-      .limit(limit!)
-      .populate({path: "folderId", select: "title"})
-      .populate({path: "authorId", select: "id image username"})
-      .lean();
-      return JSON.parse(JSON.stringify(poem));
+    if(key) {
+      const regexPattern = new RegExp(key, 'i');
+      const poems = await Poem.find({ authorId: { $ne: ids._id }, folderId: { $in: folderIds }, tags: { $elemMatch: { $regex: regexPattern }}})
+        .select("title type content tags")
+        .skip(skip!)
+        .limit(limit!)
+        .populate({ path: "folderId", select: "title" })
+        .populate({ path: "authorId", select: "id image username" })
+        .sort({ createdAt: -1 })
+        .lean();
+      return JSON.parse(JSON.stringify(poems));
+    } else {
+      const poems = await Poem.find({ authorId: { $ne: ids._id }, folderId: { $in: folderIds }})
+        .select("title type content tags")
+        .skip(skip!)
+        .limit(limit!)
+        .populate({ path: "folderId", select: "title" })
+        .populate({ path: "authorId", select: "id image username" })
+        .sort({ createdAt: -1 })
+        .lean();
+      return JSON.parse(JSON.stringify(poems));
     }
+
   } catch (error: any) {
     throw new Error("Error occured in fetchPoemComplex: ", error.message);
   }
@@ -174,17 +200,99 @@ export async function handleLike(authUserId: string | undefined, poemId: string,
   }
 }
 
-export async function totalFetchLikedPoems(poemIds: string[]) {
+export async function totalFetchLikedPoems(authorId: string, poemIds: string[]) { //użyć populate
   mongoose.set('strictPopulate', false);
   connectToDB();
   try {
-    let results = poemIds.map(async (poemId) => {
-      return await Poem.findById(poemId).populate({ path: "authorId", select: "username name image id" }).populate({ path: "folderId", select: "title shared" });
-    });
-    const data = await Promise.all(results);
+    let results = await Promise.all(
+      poemIds.map(async (poemId) => {
+        const poem = await Poem.findById(poemId)
+          .populate({ path: "authorId", select: "username name image id" })
+          .populate({ path: "folderId", select: "title shared" });
+
+        if (poem?.folderId?.shared || poem?.authorId?.id === authorId) return poem;
+        return null;
+      }));
+    const data = results.filter((poem: any[]) => poem !== null);
+    // console.log("data: ", data);
+    console.log(`
+      -----------------------------------------------
+      > Funkcja pobrania danych została wykonana!
+      -----------------------------------------------
+      `)
     return data || [];
   } catch (error) {
     return [];
+  }
+}
+
+export async function everyTypeLikedCountPoems(authorId: string, poemIds: string[]) {
+  connectToDB();
+  try {
+    let results = await Promise.all(
+      poemIds.map(async (poemId) => {
+        const poem = await Poem.findById(poemId)
+          .select("title type")
+          .populate({ path: "authorId", select: "id" })
+          .populate({ path: "folderId", select: "shared" });
+
+        if (poem?.folderId?.shared || poem?.authorId?.id == authorId) return poem;
+        return null;
+      }));
+
+    const data = results.filter((poem: { _id: string, folderId: { _id: string, shared: boolean }, title: string, type: string }) => poem !== null);
+    const count: { [type: string]: number } = {};
+    data.map((poem: { _id: string, folderId: { _id: string, shared: boolean }, title: string, type: string }) => {
+      if (!count[poem?.type]) count[poem.type] = 1;
+      else count[poem.type] += 1;
+    })
+    // console.log("Data: ", data);
+    // console.log("Count: ", count);
+    return count;
+  } catch (error) {
+    return {};
+  }
+}
+
+export async function getTopThreePoemsType(authorId: string) {
+  function getTopThree(count: Record<string, number>): {[type: string]: number} {
+    const entries = Object.entries(count);
+  
+    const sortedEntries = entries.sort((a, b) => b[1] - a[1]);
+  
+    const sortedEntriesMax = sortedEntries.slice(0, 3).map(([key]) => key);
+
+    const limitedCount: { [type: string]: number} = {};
+
+    sortedEntriesMax.map(entry => limitedCount[entry] = count[entry])
+
+    return limitedCount;
+  }
+  
+  connectToDB();
+  try {
+    const userData = await Author.findOne({ id: authorId }).select("folders")
+      .populate({
+        path: "folders",
+        populate: {
+          path: "poems",
+          model: "Poem",
+          select: "type",
+        },
+        select: "title",
+      })
+      .select("username folders");
+
+    const poemsData = userData.folders.map((folder: any) => folder.poems).flat();
+    const count: { [type: string]: number } = {};
+    poemsData.map((poem: { _id: string, type: string }) => {
+      if (!count[poem?.type]) count[poem.type] = 1;
+      else count[poem.type] += 1;
+    });
+
+    return getTopThree(count);
+  } catch (error) {
+    return {}
   }
 }
 
@@ -196,7 +304,7 @@ export async function searchSimple(text: string) {
 
     const foundPoems = await Poem
       .find({ title: { $regex: text }, folderId: { $in: folderIds } })
-      .select("title type content authorId")
+      .select("title type content authorId folderId")
       .limit(5)
       .populate({ path: "authorId", select: "id" });
     const plainPoems = foundPoems.map(poem => JSON.parse(JSON.stringify(poem)));
@@ -207,8 +315,8 @@ export async function searchSimple(text: string) {
 }
 
 export async function searchComplex(
-  { text, poemType, sortOrder, page, dpp }:
-    { text: string, poemType: string, sortOrder: string, page: number, dpp: number }
+  { text, poemType, userTags, sortOrder, page, dpp }:
+    { text: string, poemType: string, userTags: string, sortOrder: string, page: number, dpp: number }
 ): Promise<[any[], number]> {
   connectToDB();
 
@@ -223,6 +331,7 @@ export async function searchComplex(
     } else if (sortOrder === 'min') {
       sortOption = { favouritesCount: 1 };
     }
+    const tagsArray: string[] = userTags.trim().split(" ").filter((tag: string) => tag.length > 3 && tag[0] == '#').map((tag: string) => tag.slice(1, tag.length));
 
     const folders = await Folder.find({ shared: true }).select("_id");
     const folderIds = folders.map(folder => folder._id);
@@ -233,6 +342,7 @@ export async function searchComplex(
           title: 1,
           content: 1,
           authorId: 1,
+          tags: 1,
           type: 1,
           folderId: 1,
           favouritesCount: { $size: '$favourite' },
@@ -254,6 +364,7 @@ export async function searchComplex(
           title: 1,
           content: 1,
           authorId: 1,
+          tags: 1,
           type: 1,
           folderId: 1,
           favouritesCount: 1,
@@ -262,11 +373,18 @@ export async function searchComplex(
       },
       {
         $match: {
-          title: { $regex: text, $options: 'i' },
           folderId: { $in: folderIds },
         },
       },
     ];
+
+    if (text) {
+      pipeline.push({
+        $match: {
+          title: { $regex: text, $options: 'i' },
+        },
+      })
+    }
 
     if (poemType !== "any") {
       pipeline.push({
@@ -274,6 +392,14 @@ export async function searchComplex(
           type: poemType,
         },
       });
+    }
+
+    if (tagsArray.length) {
+      pipeline.push({
+        $match: {
+          tags: { $in: tagsArray },
+        },
+      })
     }
 
     if (sortOption) {

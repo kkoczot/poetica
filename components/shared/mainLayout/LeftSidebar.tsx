@@ -37,7 +37,7 @@ function LeftSidebar() {
       <div className="flex w-full flex-1 flex-col gap-6 px-6">
         {sidebarLinks.map(l => {
           if (!userId && l.route === "/profile") return;
-          const isAcive = (pathname.includes(l.route) && l.route.length > 1) || pathname === l.route;
+          const isAcive = ((pathname.includes(l.route) && l.route.length > 1) || pathname === l.route) || l.label == "Home" && pathname.startsWith("/tags");
           return (
             <Link key={l.label} href={l.route === "/profile" ? `${l.route}/${userId}` : l.route} className={`${isAcive ? "bg-green-600" : ""} leftsidebar_link relative`}>
               {

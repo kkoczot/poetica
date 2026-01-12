@@ -1,9 +1,8 @@
 "use client";
 import { poemTypes } from "@/constants";
 import { ObjectId } from "mongoose";
-import Image from "next/image";
-import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
+import PoemPost from "../cards/PoemPost";
 
 interface Author {
   _id: ObjectId;
@@ -25,6 +24,7 @@ interface Poem {
   folderId: Folder;
   title: string;
   type: string;
+  tags: string[];
   content: string;
   favourite: ObjectId[];
   comments: any[];
@@ -45,21 +45,21 @@ function FavouritePoems(data: any) {
 
   function handleTextShow(action: "text" | "amount") {
     if (action === "text") {
-      if (poemData.filter((d: Poem) => d.folderId.shared).length < 1) {
+      if (poemData.length < 1) {
         return <p className="text-red-500 mt-5">You do not like any poems yet!</p>
       }
-      else if (spQ !== "" && poemData.filter((d: Poem) => d.folderId.shared && spQ?.includes(replaceSpacesWithHyphens(d.type))).length < 1) {
+      else if (spQ !== "" && poemData.filter((d: Poem) => spQ?.includes(replaceSpacesWithHyphens(d.type))).length < 1) {
         return <p className="text-red-500 mt-5">You do not like any poems that are the type you have choosen!</p>
       }
     } else if (action === "amount") {
-      if (spQ !== "") return <p className="text-white inline-block ml-2">(found {poemData.filter((d: Poem) => d.folderId.shared && spQ?.includes(replaceSpacesWithHyphens(d.type))).length} poems)</p>
+      if (spQ !== "") return <p className="text-white inline-block ml-2">(found {poemData.filter((d: Poem) => spQ?.includes(replaceSpacesWithHyphens(d.type))).length} poems)</p>
     }
   }
 
   function getProperPoems() {
     let page = Number(sp.get("page")) || 1;
 
-    const adequatePoems = poemData.filter((d: Poem) => d.folderId.shared && (spQ === "" || spQ?.includes(replaceSpacesWithHyphens(d.type))));
+    const adequatePoems = poemData.filter((d: Poem) => (spQ === "" || spQ?.includes(replaceSpacesWithHyphens(d.type))));
 
     const countPoems = adequatePoems.length;
 
@@ -83,7 +83,7 @@ function FavouritePoems(data: any) {
 
   function handlePagination() {
     let page = Number(sp.get("page")) || 1;
-    const countPoems = poemData.filter((d: Poem) => d.folderId.shared && (spQ === "" || spQ?.includes(replaceSpacesWithHyphens(d.type)))).length;
+    const countPoems = poemData.filter((d: Poem) => (spQ === "" || spQ?.includes(replaceSpacesWithHyphens(d.type)))).length;
     const pages = Math.ceil(countPoems / showPerPage);
     if (!pages || page > pages) return false;
     if (pages < 11) {
@@ -199,31 +199,7 @@ function FavouritePoems(data: any) {
           getProperPoems().map((d: Poem) => {
             const poemType = poemTypes.filter(type => type.poemType.toLowerCase() === d.type.toLowerCase())[0];
             return (
-              <div key={d._id.toString()} className="my-14 p-4 pb-6 rounded-lg bg-dark-3 text-white">
-                <div className="flex flex-col items-start relative">
-                  <div title={'@' + d.authorId.username} className="absolute top-2 right-2 h-11 w-11 rounded-full border-2 border-green-700 flex items-center overflow-hidden">
-                    <Link href={`/profile/${d.authorId.id}`} >
-                      <Image src={d.authorId.image} alt={'@'+d.authorId.username} width={64} height={64} className="opacity-50" />
-                    </Link>
-                  </div>
-                  <Link href={`/profile/${d.authorId.id}/${d.folderId._id}/${d._id}`}><h3 className="text-[22px] font-semibold">{d.title}</h3></Link>
-                  <div className="mb-4 italic opacity-80 flex flex-col cursor-default items-start">
-                    <div className="flex">
-                      <div className="h-3 w-3 rounded-full self-center mr-1" style={{ backgroundColor: poemType.color }} />
-                      <h4 className="self-start" title="Poem type">{d.type}</h4>
-                    </div>
-                    <Link href={`/profile/${d.authorId.id}`}>
-                      <h4 title="Author">@{d.authorId.username}</h4>
-                    </Link>
-                    <Link href={`/profile/${d.authorId.id}/${d.folderId._id}`}><h4 className="self-start" title="Folder">{d.folderId.title}</h4></Link>
-                  </div>
-                </div>
-                <div className="space-y-2">
-                  <h3>Title: {d.title}</h3>
-                  <h4>Type: {d.type}</h4>
-                  <p className="text-light-2 whitespace-break-spaces">{d.content}</p>
-                </div>
-              </div>
+              <PoemPost key={d._id.toString()} poem={d} poemType={poemType} />
             )
           }
           )

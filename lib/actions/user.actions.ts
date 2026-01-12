@@ -174,8 +174,10 @@ export async function suggestedAuthors( userId: string | undefined, condition: "
       const folderIds = folders.map(folder => folder._id);
 
       const skipAuthors = await Author.find({followers: { $in: [ids?._id] }}, "_id");
+      // console.log("skipAuthors: ", skipAuthors);
 
-      const poems = await Poem.find({ _id: { $nin: folderIds}, authorId: { $nin: skipAuthors } }, "authorId");
+      // pobranie wszystkich wierszy
+      const poems = await Poem.find({ _id: { $nin: folderIds}, authorId: { $nin: [...skipAuthors, ids?._id] } }, "authorId");
 
       interface AuthorsAndAmount {
         [key: string]: number;
@@ -208,6 +210,8 @@ export async function suggestedAuthors( userId: string | undefined, condition: "
       return authorData || [];
     }
     if (condition === "fame") {
+      // top 30 the most famous authors
+      // console.log(ids);
       const authors = await Author.aggregate([
         {
           $match: {
@@ -237,7 +241,15 @@ export async function suggestedAuthors( userId: string | undefined, condition: "
       if (!userId) return [];
       const followedAuthors = await Author.findOne({id: userId}, {following: 1, _id: 0});
 
-      if (!followedAuthors.following.length) return [];
+      if (!followedAuthors.following.length) {
+        const topAuthors:any[] = await suggestedAuthors(userId, "fame");
+        const authorsToDiscard = await Author.findOne({id: userId}).select("following");
+        // console.log("authorsToDiscard: ", authorsToDiscard.following);
+        // topAuthors.map((item: any) => console.log("item: ", item));
+        const topAuthorsToFollow = topAuthors.filter((author: any) => !authorsToDiscard.following.includes(author.id) && author.id != userId);
+        return topAuthorsToFollow;
+      };
+      // console.log("followedAuthors: ", followedAuthors);
       let authorsFollowedNext = followedAuthors.following.map( async (fAuthor: any) => await Author.findById(fAuthor, {following: 1, _id: 0}));
       authorsFollowedNext = await Promise.all(authorsFollowedNext);
 
@@ -256,8 +268,15 @@ export async function suggestedAuthors( userId: string | undefined, condition: "
       });
 
       let toFollowKeys = Object.keys(authorsFollowedNextAmount);
-      if (toFollowKeys.includes(userId.toString())) {
-        toFollowKeys = removeElements(toFollowKeys, [userId.toString()]);
+      const user_id = await getUsersIds(userId.toString(), "Clerk");
+      if (toFollowKeys.includes(user_id?._id.toString())) {
+        toFollowKeys = removeElements(toFollowKeys, [user_id._id.toString()]);
+        if(!toFollowKeys.length) {
+          const topAuthors:any[] = await suggestedAuthors(userId, "fame");
+          const authorsToDiscard = await Author.findOne({id: userId}).select("following");
+          const topAuthorsToFollow = topAuthors.filter((author: any) => !authorsToDiscard.following.includes(author.id) && author.id != userId);
+          return topAuthorsToFollow || [];
+        }
       }
       toFollowKeys = removeElements(toFollowKeys, followedAuthors.following.map((fId: any) => fId.toString()));
 
@@ -269,6 +288,12 @@ export async function suggestedAuthors( userId: string | undefined, condition: "
         plainAData["similarAuthors"] = authorsFollowedNextAmount[String(aData._id)];
         return plainAData;
       }).slice(0, limitSimilar || 29);
+
+      if(!authorsFollowedNext?.length) {
+        authorsFollowedNext = await suggestedAuthors(userId, "fame");
+        authorsFollowedNext.slice(0, limitSimilar || 29);
+      }
+      // console.log("authorsFollowedNext (final): ", authorsFollowedNext);
       return authorsFollowedNext;
     }
   } catch (error: any) {
