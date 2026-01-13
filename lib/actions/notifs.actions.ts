@@ -6,7 +6,7 @@ import { connectToDB } from "../mongoose";
 import { getUsersIds } from "./user.actions";
 
 export async function countUnreadNotifs(currentUserId: string | null) {
-  connectToDB();
+  await connectToDB();
   try {
     if (!currentUserId) return 0;
     if (currentUserId) {
@@ -24,7 +24,7 @@ export async function countUnreadNotifs(currentUserId: string | null) {
 }
 
 export async function handleNotifs(currentUserId: string): Promise<[any[], number]> {
-  connectToDB();
+  await connectToDB();
   try {
     const unreadNotifs = await countUnreadNotifs(currentUserId);
     const notifs = await Notifs.find().sort({ createdAt: "desc" }).lean();

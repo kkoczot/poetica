@@ -19,7 +19,7 @@ interface Params {
 }
 
 export async function createPoem({ folderId, authorId, title, type, content, tag1, tag2, tag3 }: Params) {
-  connectToDB();
+  await connectToDB();
 
   const tags = [tag1];
   if (tag2) tags.push(tag2);
@@ -39,8 +39,8 @@ export async function createPoem({ folderId, authorId, title, type, content, tag
       $push: { poems: createdPoem._id },
     });
     revalidatePath("/profile/");
-  } catch (error) {
-    throw new Error("Failed to create a folder");
+  } catch (error: any) {
+    throw new Error("Failed to create a poem ", error.message);
   }
 }
 
@@ -57,7 +57,7 @@ interface EditParams {
 }
 
 export async function editPoem({ poemId, title, content, type, folderDest, oldFolder, tag1, tag2, tag3 }: EditParams) {
-  connectToDB();
+  await connectToDB();
 
   const tags = [tag1];
   if (tag2) tags.push(tag2);
@@ -89,12 +89,12 @@ export async function editPoem({ poemId, title, content, type, folderDest, oldFo
     };
     revalidatePath("/profile/");
   } catch (error: any) {
-    throw new Error("Failed to edit folder");
+    throw new Error("Failed to edit folder: ", error.message);
   }
 }
 
 export async function checkIfRightFolder(poemId: string, folderId: string) {
-  connectToDB();
+  await connectToDB();
   try {
     const isFolderRight = await Folder.exists({ _id: folderId, poems: { $in: poemId } });
     return Boolean(isFolderRight);
@@ -104,17 +104,17 @@ export async function checkIfRightFolder(poemId: string, folderId: string) {
 }
 
 export async function fetchPoem(poemId: string) {
-  connectToDB();
+  await connectToDB();
   try {
     const res = await Poem.findById(poemId);
     return res;
   } catch (error: any) {
-    throw new Error("Failed to fetch poem data");
+    throw new Error("Failed to fetch poem data: ", error.message);
   }
 }
 
 export async function fetchPoemComplexV2(userId: string | null, skip: number, limit: number, key?: string) {
-  connectToDB();
+  await connectToDB();
   try {
     let ids = { _id: null };
     if (userId) {
@@ -154,7 +154,7 @@ export async function fetchPoemComplexV2(userId: string | null, skip: number, li
 }
 
 export async function deletePoem(poemId: string) {
-  connectToDB();
+  await connectToDB();
   try {
     const { folderId } = await fetchPoem(poemId);
     await Folder.findByIdAndUpdate(folderId, {
@@ -165,7 +165,7 @@ export async function deletePoem(poemId: string) {
 
     revalidatePath("/profile/");
   } catch (error: any) {
-    throw new Error("Failed to delete folder");
+    throw new Error("Failed to delete folder ", error.message);
   }
 }
 
@@ -175,7 +175,7 @@ export async function handleLike(authUserId: string | undefined, poemId: string,
     return Boolean(contains);
   }
 
-  connectToDB();
+  await connectToDB();
   if (!authUserId) return;
   try {
     if (action === "check") {
@@ -195,7 +195,7 @@ export async function handleLike(authUserId: string | undefined, poemId: string,
       }
     }
   } catch (error: any) {
-    throw new Error("Failed to handle action connected to likes!");
+    throw new Error("Failed to handle action connected to likes! ", error.message);
   } finally {
     revalidatePath(`/profile/${authUserId}/`)
   }
@@ -203,7 +203,7 @@ export async function handleLike(authUserId: string | undefined, poemId: string,
 
 export async function totalFetchLikedPoems(authorId: string, poemIds: string[]) { //użyć populate
   mongoose.set('strictPopulate', false);
-  connectToDB();
+  await connectToDB();
   try {
     let results = await Promise.all(
       poemIds.map(async (poemId) => {
@@ -228,7 +228,7 @@ export async function totalFetchLikedPoems(authorId: string, poemIds: string[]) 
 }
 
 export async function everyTypeLikedCountPoems(authorId: string, poemIds: string[]) {
-  connectToDB();
+  await connectToDB();
   try {
     let results = await Promise.all(
       poemIds.map(async (poemId) => {
@@ -270,7 +270,7 @@ export async function getTopThreePoemsType(authorId: string) {
     return limitedCount;
   }
   
-  connectToDB();
+  await connectToDB();
   try {
     const userData = await Author.findOne({ id: authorId }).select("folders")
       .populate({
@@ -298,7 +298,7 @@ export async function getTopThreePoemsType(authorId: string) {
 }
 
 export async function searchSimple(text: string) {
-  connectToDB();
+  await connectToDB();
   try {
     const folders = await Folder.find({ shared: true }).select("_id");
     const folderIds = folders.map(folder => folder._id);
@@ -310,8 +310,8 @@ export async function searchSimple(text: string) {
       .populate({ path: "authorId", select: "id" });
     const plainPoems = foundPoems.map(poem => JSON.parse(JSON.stringify(poem)));
     return plainPoems || [];
-  } catch (error) {
-    throw new Error("Failed to search for poems in searchSimple()");
+  } catch (error: any) {
+    throw new Error("Failed to search for poems in searchSimple() ", error.message);
   }
 }
 
@@ -319,7 +319,7 @@ export async function searchComplex(
   { text, poemType, userTags, sortOrder, page, dpp }:
     { text: string, poemType: string, userTags: string, sortOrder: string, page: number, dpp: number }
 ): Promise<[any[], number]> {
-  connectToDB();
+  await connectToDB();
 
   try {
     const amountToSkip = (page - 1) * dpp;

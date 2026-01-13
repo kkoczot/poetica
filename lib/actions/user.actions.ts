@@ -17,22 +17,8 @@ interface Params {
   path: string,
 }
 
-/*
-jest jakiś błąd - gdzieś albo w funkcji updateUser, albo w /onboarding albo w AccountProfile
-da się stworzyć użytkownika w Clerk, potem przechodzi do onboarding, ale tam nie działa kliknięcie continue
-pomimo dobrego wypełnienia formularza
-
-Co to może być:
-- najpewniej jakiś błąd w funkcji poniżej, może upsert nie działa?
-
-Co sprawdzić:
-- sprawdzić czy już istniejący autor może aktualizować info na swoim profilu -> może
-
-- tylko nowy user nie może zatwierdzić swoich danych
-*/
-
 export async function updateUser({ userId, username, name, bio, image, path, }: Params): Promise<void> {
-  connectToDB();
+  await connectToDB();
   console.log(userId, "\n\n", username, "\n\n",name, "\n\n",bio, "\n\n",image, "\n\n",path)
   try {
     await Author.findOneAndUpdate(
@@ -57,7 +43,7 @@ export async function updateUser({ userId, username, name, bio, image, path, }: 
 }
 
 export async function checkIfNewUser(userId: string) {
-  connectToDB();
+  await connectToDB();
   try {
     const user = await Author.findOne({ id: userId }).select("username folders").exec();
     if (user?.folders.length < 1) await createFolder({
@@ -67,13 +53,13 @@ export async function checkIfNewUser(userId: string) {
       shared: false,
       firstFolder: true,
     });
-  } catch (error) {
-    throw new Error("Failed to create first folder");
+  } catch (error: any) {
+    throw new Error("Failed to create first folder: ", error.message);
   }
 }
 
 export async function checkIfUserExists(userId: string) {
-  connectToDB();
+  await connectToDB();
   try {
     const exists = await Author.exists({ id: userId });
     return exists;
@@ -83,36 +69,36 @@ export async function checkIfUserExists(userId: string) {
 }
 
 export async function fetchUser(userId: string) {
+  await connectToDB();
   try {
-    connectToDB();
     return await Author.findOne({ id: userId })
-  } catch (error) {
-    throw new Error("Filed to fetch user: ");
+  } catch (error: any) {
+    throw new Error("Filed to fetch user: ", error.message);
   }
 }
 
 export async function checkIfOnboarded(userId: string | null) {
+  await connectToDB();
   try {
-    connectToDB();
     let ids = { _id: null };
     if (userId) {
       ids = await getUsersIds(userId, "Clerk");
       if (ids == null) return -1;
     }
     return 0;
-  } catch (error) {
-    throw new Error("Failed to check if user is onboarded");
+  } catch (error: any) {
+    throw new Error("Failed to check if user is onboarded ", error.message);
   }
 }
 
 export async function fetchSimilarAuthors(userId: string) {
   const currentUser = await fetchUser(userId);
   try {
-    connectToDB();
+    await connectToDB();
     const similarAuthors = await Author.find({ followers: { $nin: [currentUser._id] }, _id: { $ne: currentUser._id } }).limit(5);
     return similarAuthors;
-  } catch (error) {
-    throw new Error("Failes to retrieve suggested users!");
+  } catch (error: any) {
+    throw new Error("Failes to retrieve suggested users! ", error.message);
   }
 }
 
@@ -120,27 +106,27 @@ export async function fetchFollowedAuthors(userId: string) {
   const currentUser = await fetchUser(userId);
   if (currentUser == null) return [];
   try {
-    connectToDB();
+    await connectToDB();
     const followedAuthors = await Author.find({ followers: { $in: [currentUser._id] }, _id: { $ne: currentUser._id } }).limit(5);
     return followedAuthors;
-  } catch (error) {
-    throw new Error("Failes to retrieve followed users!");
+  } catch (error: any) {
+    throw new Error("Failes to retrieve followed users! ", error.message);
   }
 }
 
 export async function checkUserFollow(authUserId: string, userId: string) {
-  connectToDB();
+  await connectToDB();
   try {
     const searchedUserId = await Author.findOne({ id: userId }).select("_id");
     const isFollowed = await Author.findOne({ id: authUserId, following: { $in: searchedUserId } }).exec();
     return isFollowed ? true : false;
-  } catch (error) {
-    throw new Error("Failed to check if user is followed");
+  } catch (error: any) {
+    throw new Error("Failed to check if user is followed ", error.message);
   }
 }
 
 export async function handleUserFollow(authUserId: string, userId: string) {
-  connectToDB();
+  await connectToDB();
   try {
     const isFollowed = await checkUserFollow(authUserId, userId);
     const searchedUserId = await Author.findOne({ id: userId }).select("_id followers");
@@ -161,8 +147,8 @@ export async function handleUserFollow(authUserId: string, userId: string) {
         $push: { following: searchedUserId._id }
       })
     }
-  } catch (error) {
-    throw new Error("Failed to make a follower and followed state");
+  } catch (error: any) {
+    throw new Error("Failed to make a follower and followed state ", error.message);
   }
 }
 
@@ -177,13 +163,13 @@ export async function getUsersIds(id: string, convertFrom: "MongoDB" | "Clerk") 
 }
 
 export async function searchSimple(text: string) {
-  connectToDB();
+  await connectToDB();
   try {
     const foundAuthors = await Author.find({ username: { $regex: text } }).select("id image username").limit(5);
     const plainAuthors = foundAuthors.map(author => JSON.parse(JSON.stringify(author)));
     return plainAuthors || [];
-  } catch (error) {
-    throw new Error("Failed to search for authors in searchSimple()");
+  } catch (error: any) {
+    throw new Error("Failed to search for authors in searchSimple() ", error.message);
   }
 }
 
@@ -191,7 +177,7 @@ export async function suggestedAuthors( userId: string | undefined, condition: "
   function removeElements(firstArray: any[], secondArray: any[]) {
     return firstArray.filter(id => !secondArray.includes(id));
   };
-  connectToDB();
+  await connectToDB();
   try {
     let ids = { _id: null };
     if (userId) {
@@ -331,7 +317,7 @@ export async function suggestedAuthors( userId: string | undefined, condition: "
 }
 
 export async function searchComplex({text, sortOrder, page, dpp}: {text: string, sortOrder: string, page: number, dpp: number}): Promise<[any[], number]> {
-  connectToDB();
+  await connectToDB();
   try {
     const amountToSkip = (page - 1) * dpp;
 

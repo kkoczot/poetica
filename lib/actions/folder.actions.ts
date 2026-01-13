@@ -16,7 +16,7 @@ interface Params {
 };
 
 export async function createFolder({ authorId, title, description, firstFolder, shared }: Params) {
-  connectToDB();
+  await connectToDB();
   try {
     const createdFolder = await Folder.create({
       authorId,
@@ -37,7 +37,7 @@ export async function createFolder({ authorId, title, description, firstFolder, 
 };
 
 export async function editFolder({ folderId, title, description, shared }: { folderId: string, title: string, description: string, shared: boolean }) {
-  connectToDB();
+  await connectToDB();
 
   try {
     await Folder.findOneAndUpdate(
@@ -52,12 +52,12 @@ export async function editFolder({ folderId, title, description, shared }: { fol
     );
     revalidatePath("/profile/");
   } catch (error: any) {
-    throw new Error("Failed to edit folder");
+    throw new Error("Failed to edit folder: ", error.message);
   }
 }
 
 export async function deleteFolder(userId: string, folderId: string) {
-  connectToDB();
+  await connectToDB();
   try {
     const workingFolder = await Author.findOne({ id: userId }).populate({ path: "folders", match: { deletable: false } }).exec();
     let poemsToWorkingFolder = await Poem.find({ folderId: folderId });
@@ -70,12 +70,12 @@ export async function deleteFolder(userId: string, folderId: string) {
     await Folder.findByIdAndUpdate(workingFolder.folders[0]._id, { $push: { poems: { $each: poemsToWorkingFolder } } })
     revalidatePath("/profile/");
   } catch (error: any) {
-    throw new Error("Failed to drop folder X(");
+    throw new Error("Failed to drop folder X( ", error.message);
   }
 }
 
 export async function checkIfRightUser(folderId: string, userId: string) {
-  connectToDB();
+  await connectToDB();
   try {
     const isAuthorRight = await Author.exists({ id: userId, folders: { $in: folderId } });
     return Boolean(isAuthorRight);
@@ -85,22 +85,22 @@ export async function checkIfRightUser(folderId: string, userId: string) {
 }
 
 export async function fetchFolder(folderId: string) {
-  connectToDB();
+  await connectToDB();
   try {
     const fethcedFolder = await Folder.findById(folderId);
     return fethcedFolder;
-  } catch (error) {
-    throw new Error("Failed to fetch folder data");
+  } catch (error: any) {
+    throw new Error("Failed to fetch folder data: ", error.message);
   }
 };
 
 export async function getAllUserFolders(userId: string) {
-  connectToDB();
+  await connectToDB();
   try {
     const authorId = await Author.findOne({ id: userId }).select("_id").exec();
     return await Folder.find({ authorId });
-  } catch (error) {
-    throw new Error("Failed to reach all users folders");
+  } catch (error: any) {
+    throw new Error("Failed to reach all users folders ", error.message);
   }
 };
 
@@ -110,7 +110,7 @@ export async function checkWhatTypeOfFolder(folderId: string) {
     return Object.keys(typeCounts).filter((tag: string) => typeCounts[tag] === maxCount);
   }
   
-  connectToDB();
+  await connectToDB();
   try {
     const typeAmount: { [type: string]: number } = {};
     const folderPoemInfo = await Folder.findById(folderId).select("poems").populate({path: "poems", model: "Poem", select: "type"}).exec();
@@ -124,24 +124,24 @@ export async function checkWhatTypeOfFolder(folderId: string) {
     // console.log("typeAmount: ", typeAmount);
     // console.log("mostNumerousTags: ", mostNumerousTags);
     return mostNumerousTags;
-  } catch (error) {
-    throw new Error("Failed to check what kind of poems given folder has");
+  } catch (error: any) {
+    throw new Error("Failed to check what kind of poems given folder has ", error.message);
   }
 }
 
 export async function searchSimple(text: string) {
-  connectToDB();
+  await connectToDB();
   try {
     const foundFolders = await Folder.find({ title: { $regex: text }, shared: true }).select("title authorId").populate({path: "authorId", select: "id"});
     const plainFolders = foundFolders.map(folder => JSON.parse(JSON.stringify(folder)));
     return plainFolders || [];
-  } catch (error) {
-    throw new Error("Failed to search for folders in searchSimple()");
+  } catch (error: any) {
+    throw new Error("Failed to search for folders in searchSimple() ", error.message);
   }
 }
 
 export async function searchComplex({text, sortOrder, page, dpp}: {text: string, sortOrder: string, page: number, dpp: number}): Promise<[any[], number]> {
-  connectToDB();
+  await connectToDB();
   try {
     const amountToSkip = (page - 1) * dpp;
 
