@@ -119,6 +119,7 @@ export async function fetchPoemComplexV2(userId: string | null, skip: number, li
     let ids = { _id: null };
     if (userId) {
       ids = await getUsersIds(userId, "Clerk");
+      if (ids == null) return [];
     }
     
     const folders = await Folder.find({ shared: true }).select("_id");

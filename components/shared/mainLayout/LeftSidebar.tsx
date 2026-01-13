@@ -18,7 +18,10 @@ function LeftSidebar() {
     async function getUnreadNotifs() {
       try {
         const count = await countUnreadNotifs(userId || null);
-        setUnreadCount(() => count);
+        if (count == -1) {
+          router.push("/onboarding");
+        }
+        setUnreadCount(() => count >= 0 ? count : 0);
       } catch (error: any) {
         throw new Error("Failed to get unread notifs count");
       }

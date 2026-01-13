@@ -4,12 +4,13 @@ import { useAuth } from "@clerk/nextjs";
 import { sidebarLinks } from "@/constants";
 import Image from "next/image";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { countUnreadNotifs } from "@/lib/actions/notifs.actions";
 
 function Bottombar() {
   const { userId } = useAuth();
+  const router = useRouter();
   const pathname = usePathname();
   const [unreadCount, setUnreadCount] = useState(0);
   const [initialStart, setInitialStart] = useState(true);
@@ -18,7 +19,10 @@ function Bottombar() {
     async function getUnreadNotifs() {
       try {
         const count = await countUnreadNotifs(userId || null);
-        setUnreadCount(() => count);
+        if (count == -1) {
+          router.push("/onboarding");
+        }
+        setUnreadCount(() => count >= 0 ? count : 0);
       } catch (error: any) {
         throw new Error("Failed to get unread notifs count");
       }

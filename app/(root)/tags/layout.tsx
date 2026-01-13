@@ -33,12 +33,6 @@ interface Poem {
   __v: number;
 }
 
-// TODO:
-// Napisać funkcję, która wyświetli odpowiednią ilość wierszy aby pojawił się scroll
-// Pseudokod: (wykorzystać: [zapewne] useEffect )
-// - wykonywać dopóki: po pobraniu i wyświetleniu danych wysokość strony jest mniejsza od wysokości ekranu
-// - zmienić toDisplay, showData, poems aby wywołać re-render
-
 function TagsLayout({ children }: { children: React.ReactNode }) {
 
   // const router = useRouter();

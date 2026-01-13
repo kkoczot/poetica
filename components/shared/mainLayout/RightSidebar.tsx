@@ -5,7 +5,7 @@ import UserCarousel from "../UserCarousel";
 async function RightSidebar() {
   const user = await currentUser();
   if (!user) return null;
-  const similarAuthors = await suggestedAuthors(user.id, "similar", 5) || [];
+  const similarAuthors = await suggestedAuthors(user?.id, "similar", 5) || [];
   const followedAuthors = await fetchFollowedAuthors(user.id) || [];
   return (
     <section className="custom-scrollbar rightsidebar overflow-hidden min-w-[250px]">

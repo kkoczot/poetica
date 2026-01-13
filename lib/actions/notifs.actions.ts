@@ -3,11 +3,17 @@
 import Notifs from "../models/notifs.models";
 import Author from "../models/user.model";
 import { connectToDB } from "../mongoose";
+import { getUsersIds } from "./user.actions";
 
 export async function countUnreadNotifs(currentUserId: string | null) {
   connectToDB();
   try {
     if (!currentUserId) return 0;
+    if (currentUserId) {
+      let ids = { _id: null };
+      ids = await getUsersIds(currentUserId, "Clerk");
+      if (ids == null) return -1;
+    }
     const amountOfNotifs = await Notifs.countDocuments();
     const amountOfReadNotifs = await Author.findOne({ id: currentUserId }).select("readNotifs");
     const unread = amountOfNotifs - amountOfReadNotifs.readNotifs.length;

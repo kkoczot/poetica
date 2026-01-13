@@ -17,9 +17,23 @@ interface Params {
   path: string,
 }
 
+/*
+jest jakiś błąd - gdzieś albo w funkcji updateUser, albo w /onboarding albo w AccountProfile
+da się stworzyć użytkownika w Clerk, potem przechodzi do onboarding, ale tam nie działa kliknięcie continue
+pomimo dobrego wypełnienia formularza
+
+Co to może być:
+- najpewniej jakiś błąd w funkcji poniżej, może upsert nie działa?
+
+Co sprawdzić:
+- sprawdzić czy już istniejący autor może aktualizować info na swoim profilu -> może
+
+- tylko nowy user nie może zatwierdzić swoich danych
+*/
+
 export async function updateUser({ userId, username, name, bio, image, path, }: Params): Promise<void> {
   connectToDB();
-
+  console.log(userId, "\n\n", username, "\n\n",name, "\n\n",bio, "\n\n",image, "\n\n",path)
   try {
     await Author.findOneAndUpdate(
       { id: userId },
@@ -77,6 +91,20 @@ export async function fetchUser(userId: string) {
   }
 }
 
+export async function checkIfOnboarded(userId: string | null) {
+  try {
+    connectToDB();
+    let ids = { _id: null };
+    if (userId) {
+      ids = await getUsersIds(userId, "Clerk");
+      if (ids == null) return -1;
+    }
+    return 0;
+  } catch (error) {
+    throw new Error("Failed to check if user is onboarded");
+  }
+}
+
 export async function fetchSimilarAuthors(userId: string) {
   const currentUser = await fetchUser(userId);
   try {
@@ -86,11 +114,11 @@ export async function fetchSimilarAuthors(userId: string) {
   } catch (error) {
     throw new Error("Failes to retrieve suggested users!");
   }
-  return "";
 }
 
 export async function fetchFollowedAuthors(userId: string) {
   const currentUser = await fetchUser(userId);
+  if (currentUser == null) return [];
   try {
     connectToDB();
     const followedAuthors = await Author.find({ followers: { $in: [currentUser._id] }, _id: { $ne: currentUser._id } }).limit(5);
@@ -168,6 +196,7 @@ export async function suggestedAuthors( userId: string | undefined, condition: "
     let ids = { _id: null };
     if (userId) {
       ids = await getUsersIds(userId, "Clerk");
+      if (ids == null) return [];
     }
     if (condition === "amount") {
       const folders = await Folder.find({ shared: true }).select("_id");
